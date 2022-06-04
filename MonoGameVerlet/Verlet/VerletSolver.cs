@@ -94,8 +94,9 @@ namespace MonoGameVerlet.Verlet
                 {
                     VerletComponent verletComponent2 = verletComponents[k];
                     Vector2 collisionAxis = verletComponent1.PositionCurrent - verletComponent2.PositionCurrent;
-                    float dist = collisionAxis.Length();
+                    float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
                     float minDist = verletComponent1.Radius + verletComponent2.Radius;
+
                     if(dist < minDist)
                     {
                         Vector2 n = collisionAxis / dist;
