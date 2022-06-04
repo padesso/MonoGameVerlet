@@ -12,17 +12,14 @@ namespace MonoGameVerlet.Verlet
     /// </summary>
     public class VerletComponent
     {
-        private SpriteBatch spriteBatch;
-
         public float Radius;
 
         public Vector2 PositionCurrent = Vector2.Zero;
         private Vector2 positionOld = Vector2.Zero;
         private Vector2 acceleration = Vector2.Zero;
 
-        public VerletComponent(Vector2 initalPosition, SpriteBatch spriteBatch, Game game, float radius = 15f)
+        public VerletComponent(Vector2 initalPosition, float radius = 15f)
         {
-            this.spriteBatch = spriteBatch;
             positionOld = initalPosition;
             PositionCurrent = initalPosition;
             Radius = radius;

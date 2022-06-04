@@ -125,7 +125,7 @@ namespace MonoGameVerlet.Verlet
 
         public void AddVerletComponent(Vector2 position, float radius)
         {
-            verletComponents.Add(new VerletComponent(position, spriteBatch, base.Game, radius));
+            verletComponents.Add(new VerletComponent(position, radius));
         }
     }
 }
