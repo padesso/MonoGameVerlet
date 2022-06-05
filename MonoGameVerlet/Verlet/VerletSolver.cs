@@ -86,14 +86,17 @@ namespace MonoGameVerlet.Verlet
 
         private void solveCollisions()
         {
-            for(int i = 0; i < verletComponents.Count; i++)
+            Vector2 collisionAxis;
+
+            for (int i = 0; i < verletComponents.Count; i++)
             {
                 VerletComponent verletComponent1 = verletComponents[i];
                 
                 for(int k = i + 1; k < verletComponents.Count; k++)
                 {
                     VerletComponent verletComponent2 = verletComponents[k];
-                    Vector2 collisionAxis = verletComponent1.PositionCurrent - verletComponent2.PositionCurrent;
+                    collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
+                    collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
                     float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
                     float minDist = verletComponent1.Radius + verletComponent2.Radius;
 
@@ -111,13 +114,13 @@ namespace MonoGameVerlet.Verlet
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 360, Color.White);
+            ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
             spriteBatch.End();
 
             foreach (var verletComponent in verletComponents)
             {
                 spriteBatch.Begin();
-                ShapeExtensions.DrawCircle(spriteBatch, verletComponent.PositionCurrent, verletComponent.Radius, 36, Color.White);
+                ShapeExtensions.DrawCircle(spriteBatch, verletComponent.PositionCurrent, verletComponent.Radius, 10, Color.White);
                 spriteBatch.End();
             }
 
