@@ -71,14 +71,18 @@ namespace MonoGameVerlet.Verlet
 
         private void applyConstraint()
         {
+            Vector2 toComponent;
+            Vector2 n;
+
             foreach (var verletComponent in verletComponents)
             {
-                Vector2 toComponent = verletComponent.PositionCurrent - constraintPosition;
+                toComponent.X = verletComponent.PositionCurrent.X - constraintPosition.X;
+                toComponent.Y = verletComponent.PositionCurrent.Y - constraintPosition.Y;
                 float dist = toComponent.Length();
 
                 if(dist > constraintRadius - verletComponent.Radius)
                 {
-                    Vector2 n = Vector2.Divide(toComponent, dist);                    
+                    n = Vector2.Divide(toComponent, dist);                    
                     verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
                 }
             }
@@ -87,6 +91,7 @@ namespace MonoGameVerlet.Verlet
         private void solveCollisions()
         {
             Vector2 collisionAxis;
+            Vector2 n;
 
             for (int i = 0; i < verletComponents.Count; i++)
             {
@@ -102,7 +107,7 @@ namespace MonoGameVerlet.Verlet
 
                     if(dist < minDist)
                     {
-                        Vector2 n = collisionAxis / dist;
+                        n = collisionAxis / dist;
                         float delta = minDist - dist;
                         verletComponent1.PositionCurrent += 0.5f * delta * n;
                         verletComponent2.PositionCurrent -= 0.5f * delta * n;
