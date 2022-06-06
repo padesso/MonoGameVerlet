@@ -13,16 +13,16 @@ namespace MonoGameVerlet.DataStructures
 	public class QuadTree
 	{
 		private readonly int MAX_OBJECTS = 1;
-		private readonly int MAX_LEVELS = 100;
+		private readonly int MAX_LEVELS = 150;
 
 		private int level;
 		private List<VerletComponent> objects; //convert to your object type
 		private List<VerletComponent> returnObjects;
-		private Rectangle bounds;
+		private RectangleF bounds;
 		private QuadTree[] nodes;
 
 
-		public QuadTree(int pLevel, Rectangle pBounds)
+		public QuadTree(int pLevel, RectangleF pBounds)
 		{
 			level = pLevel;
 			objects = new List<VerletComponent>();
@@ -48,15 +48,15 @@ namespace MonoGameVerlet.DataStructures
 
 		private void Split()
 		{
-			int subWidth = (int)(bounds.Width / 2);
-			int subHeight = (int)(bounds.Height / 2);
-			int x = (int)bounds.X;
-			int y = (int)bounds.Y;
+			float subWidth = bounds.Width / 2;
+			float subHeight = bounds.Height / 2;
+			float x = bounds.X;
+			float y = bounds.Y;
 
-			nodes[0] = new QuadTree(level + 1, new Rectangle(x + subWidth, y, subWidth, subHeight));
-			nodes[1] = new QuadTree(level + 1, new Rectangle(x, y, subWidth, subHeight));
-			nodes[2] = new QuadTree(level + 1, new Rectangle(x, y + subHeight, subWidth, subHeight));
-			nodes[3] = new QuadTree(level + 1, new Rectangle(x + subWidth, y + subHeight, subWidth, subHeight));
+			nodes[0] = new QuadTree(level + 1, new RectangleF(x + subWidth, y, subWidth, subHeight));
+			nodes[1] = new QuadTree(level + 1, new RectangleF(x, y, subWidth, subHeight));
+			nodes[2] = new QuadTree(level + 1, new RectangleF(x, y + subHeight, subWidth, subHeight));
+			nodes[3] = new QuadTree(level + 1, new RectangleF(x + subWidth, y + subHeight, subWidth, subHeight));
 		}
 
 
@@ -67,8 +67,8 @@ namespace MonoGameVerlet.DataStructures
 		private int GetIndex(VerletComponent pRect)
 		{
 			int index = -1;
-			double verticalMidpoint = bounds.X + (bounds.Width / 2);
-			double horizontalMidpoint = bounds.Y + (bounds.Height / 2);
+			double verticalMidpoint = bounds.X + (bounds.Width / 2f);
+			double horizontalMidpoint = bounds.Y + (bounds.Height / 2f);
 
 			// Object can completely fit within the top quadrants
 			bool topQuadrant = (pRect.Bounds.Y < horizontalMidpoint && pRect.Bounds.Y + pRect.Bounds.Height < horizontalMidpoint);
@@ -173,8 +173,8 @@ namespace MonoGameVerlet.DataStructures
 				if (node != null)
 				{
 					node.Draw(spriteBatch, g);
-					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
-					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new RectangleF(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new RectangleF(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 				}
 			}
 		}

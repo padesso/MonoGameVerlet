@@ -30,7 +30,7 @@ namespace MonoGameVerlet.Verlet
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
-            quadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)constraintRadius * 2, (int)constraintRadius * 2));
+            quadTree = new QuadTree(0, new RectangleF(constraintPosition.X - constraintRadius, constraintPosition.Y - constraintRadius, constraintRadius * 2, constraintRadius * 2));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -48,12 +48,14 @@ namespace MonoGameVerlet.Verlet
             float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / subSteps);
             for (int subStep = subSteps; subStep > 0; subStep--)
             {
+                quadTree.Update(gameTime, verletComponents);
                 applyGravity();
                 applyConstraint();
                 solveCollisions();
-                updatePositions(subDt);
-                quadTree.Update(gameTime, verletComponents);
+                updatePositions(subDt); 
             }
+
+            
 
             base.Update(gameTime);
         }
@@ -109,7 +111,10 @@ namespace MonoGameVerlet.Verlet
 
                 for (int k = 0; k < collisions.Count; k++)
                 {
-                    verletComponent2 = verletComponents[k];
+                    if (verletComponents[i] == collisions[k]) 
+                        continue;
+
+                    verletComponent2 = collisions[k];
                     collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
                     collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
                     float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
