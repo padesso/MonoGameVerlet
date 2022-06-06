@@ -177,8 +177,8 @@ namespace MonoGameVerlet.DataStructures
 				{
 					node.Draw(spriteBatch, g);
 					//spriteBatch.Begin();
-					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left - 1, node.bounds.Top - 1, node.bounds.Width + 2, 1), Color.White);
-					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left - 1, node.bounds.Top - 1, 1, node.bounds.Height + 2), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 					//spriteBatch.End();
 				}
 			}

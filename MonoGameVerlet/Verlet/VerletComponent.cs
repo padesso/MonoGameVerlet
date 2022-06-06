@@ -40,6 +40,8 @@ namespace MonoGameVerlet.Verlet
 
             //Reset acceleration
             acceleration = Vector2.Zero;
+
+            Bounds = new Rectangle((int)PositionCurrent.X, (int)PositionCurrent.Y, (int)Radius * 2, (int)Radius * 2);
         }
 
         public void Accelerate(Vector2 acc)

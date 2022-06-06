@@ -30,7 +30,7 @@ namespace MonoGameVerlet.Verlet
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
-            quadTree = new QuadTree(0, new Rectangle((int)constraintPosition.X, (int)constraintPosition.Y, (int)constraintRadius * 2, (int)constraintRadius * 2));
+            quadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)constraintRadius * 2, (int)constraintRadius * 2));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -52,8 +52,9 @@ namespace MonoGameVerlet.Verlet
                 applyConstraint();
                 solveCollisions();
                 updatePositions(subDt);
-                quadTree.Update(gameTime, verletComponents);
             }
+
+            quadTree.Update(gameTime, verletComponents);
 
             base.Update(gameTime);
         }
