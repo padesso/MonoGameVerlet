@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
+using MonoGameVerlet.DataStructures;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -16,6 +17,7 @@ namespace MonoGameVerlet.Verlet
         public Vector2 Gravity = new Vector2(0f, 1000f);
 
         private List<VerletComponent> verletComponents;
+        private QuadTree quadTree;
 
         private int subSteps;
 
@@ -28,6 +30,8 @@ namespace MonoGameVerlet.Verlet
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
+            quadTree = new QuadTree(0, new Rectangle((int)constraintPosition.X, (int)constraintPosition.Y, (int)constraintRadius * 2, (int)constraintRadius * 2));
+
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
             this.constraintRadius = constraintRadius;
@@ -48,6 +52,7 @@ namespace MonoGameVerlet.Verlet
                 applyConstraint();
                 solveCollisions();
                 updatePositions(subDt);
+                quadTree.Update(gameTime, verletComponents);
             }
 
             base.Update(gameTime);
@@ -58,7 +63,7 @@ namespace MonoGameVerlet.Verlet
             foreach (var verletComponent in verletComponents)
             {
                 verletComponent.Update(dt);
-            }
+            }   
         }
 
         private void applyGravity()
@@ -122,6 +127,7 @@ namespace MonoGameVerlet.Verlet
         {
             spriteBatch.Begin();
             ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
+            quadTree.Draw(spriteBatch, GraphicsDevice);
             spriteBatch.End();
 
             foreach (var verletComponent in verletComponents)
