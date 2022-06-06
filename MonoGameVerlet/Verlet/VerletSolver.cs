@@ -30,7 +30,7 @@ namespace MonoGameVerlet.Verlet
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
-            quadTree = new QuadTree(0, new RectangleF(constraintPosition.X - constraintRadius, constraintPosition.Y - constraintRadius, constraintRadius * 2, constraintRadius * 2));
+            quadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2)));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -48,14 +48,15 @@ namespace MonoGameVerlet.Verlet
             float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / subSteps);
             for (int subStep = subSteps; subStep > 0; subStep--)
             {
-                quadTree.Update(gameTime, verletComponents);
+                
                 applyGravity();
                 applyConstraint();
                 solveCollisions();
-                updatePositions(subDt); 
+                updatePositions(subDt);
+                
             }
 
-            
+            quadTree.Update(gameTime, verletComponents);
 
             base.Update(gameTime);
         }
@@ -101,12 +102,11 @@ namespace MonoGameVerlet.Verlet
             Vector2 n;
             VerletComponent verletComponent1;
             VerletComponent verletComponent2;
+            List<VerletComponent> collisions = new List<VerletComponent>();
 
             for (int i = 0; i < verletComponents.Count; i++)
             {
                 verletComponent1 = verletComponents[i];
-
-                List<VerletComponent> collisions = new List<VerletComponent>();
                 quadTree.Retrieve(collisions, verletComponent1);
 
                 for (int k = 0; k < collisions.Count; k++)

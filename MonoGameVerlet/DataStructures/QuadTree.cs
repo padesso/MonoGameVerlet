@@ -12,17 +12,17 @@ namespace MonoGameVerlet.DataStructures
 
 	public class QuadTree
 	{
-		private readonly int MAX_OBJECTS = 1;
-		private readonly int MAX_LEVELS = 150;
+		private readonly int MAX_OBJECTS = 2;
+		private readonly int MAX_LEVELS = 25;
 
 		private int level;
 		private List<VerletComponent> objects; //convert to your object type
 		private List<VerletComponent> returnObjects;
-		private RectangleF bounds;
+		private Rectangle bounds;
 		private QuadTree[] nodes;
 
 
-		public QuadTree(int pLevel, RectangleF pBounds)
+		public QuadTree(int pLevel, Rectangle pBounds)
 		{
 			level = pLevel;
 			objects = new List<VerletComponent>();
@@ -53,10 +53,10 @@ namespace MonoGameVerlet.DataStructures
 			float x = bounds.X;
 			float y = bounds.Y;
 
-			nodes[0] = new QuadTree(level + 1, new RectangleF(x + subWidth, y, subWidth, subHeight));
-			nodes[1] = new QuadTree(level + 1, new RectangleF(x, y, subWidth, subHeight));
-			nodes[2] = new QuadTree(level + 1, new RectangleF(x, y + subHeight, subWidth, subHeight));
-			nodes[3] = new QuadTree(level + 1, new RectangleF(x + subWidth, y + subHeight, subWidth, subHeight));
+			nodes[0] = new QuadTree(level + 1, new Rectangle((int)(x + subWidth), (int)y, (int)subWidth, (int)subHeight));
+			nodes[1] = new QuadTree(level + 1, new Rectangle((int)x, (int)y, (int)subWidth, (int)subHeight));
+			nodes[2] = new QuadTree(level + 1, new Rectangle((int)x, (int)(y + subHeight), (int)subWidth, (int)subHeight));
+			nodes[3] = new QuadTree(level + 1, new Rectangle((int)(x + subWidth), (int)(y + subHeight), (int)subWidth, (int)subHeight));
 		}
 
 
@@ -88,7 +88,7 @@ namespace MonoGameVerlet.DataStructures
 				}
 			}
 			// Object can completely fit within the right quadrants
-			else if (pRect.Bounds.X >= verticalMidpoint)
+			else if (pRect.Bounds.X > verticalMidpoint)
 			{
 				if (topQuadrant)
 				{
@@ -155,13 +155,13 @@ namespace MonoGameVerlet.DataStructures
 				{
 					nodes[index].Retrieve(returnedObjs, obj);
 				}
-				else
-				{
-					for (int i = 0; i < nodes.Length; i++)
-					{
-						nodes[i].Retrieve(returnedObjs, obj);
-					}
-				}
+				//else
+				//{
+				//	for (int i = 0; i < nodes.Length; i++)
+				//	{
+				//		nodes[i].Retrieve(returnedObjs, obj);
+				//	}
+				//}
 			}
 			returnedObjs.AddRange(objects);
 		}
@@ -173,8 +173,8 @@ namespace MonoGameVerlet.DataStructures
 				if (node != null)
 				{
 					node.Draw(spriteBatch, g);
-					ShapeExtensions.DrawRectangle(spriteBatch, new RectangleF(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
-					ShapeExtensions.DrawRectangle(spriteBatch, new RectangleF(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
+					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 				}
 			}
 		}
