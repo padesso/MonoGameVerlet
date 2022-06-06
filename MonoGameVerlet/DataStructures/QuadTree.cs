@@ -12,10 +12,8 @@ namespace MonoGameVerlet.DataStructures
 
 	public class QuadTree
 	{
-
-
-		private readonly int MAX_OBJECTS = 10;
-		private readonly int MAX_LEVELS = 7;
+		private readonly int MAX_OBJECTS = 1;
+		private readonly int MAX_LEVELS = 100;
 
 		private int level;
 		private List<VerletComponent> objects; //convert to your object type
@@ -170,16 +168,13 @@ namespace MonoGameVerlet.DataStructures
 
 		public void Draw(SpriteBatch spriteBatch, GraphicsDevice g)
 		{
-
 			foreach (QuadTree node in nodes)
 			{
 				if (node != null)
 				{
 					node.Draw(spriteBatch, g);
-					//spriteBatch.Begin();
 					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
-					//spriteBatch.End();
 				}
 			}
 		}

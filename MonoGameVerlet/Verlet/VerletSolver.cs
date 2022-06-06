@@ -52,9 +52,8 @@ namespace MonoGameVerlet.Verlet
                 applyConstraint();
                 solveCollisions();
                 updatePositions(subDt);
+                quadTree.Update(gameTime, verletComponents);
             }
-
-            quadTree.Update(gameTime, verletComponents);
 
             base.Update(gameTime);
         }
@@ -104,8 +103,11 @@ namespace MonoGameVerlet.Verlet
             for (int i = 0; i < verletComponents.Count; i++)
             {
                 verletComponent1 = verletComponents[i];
-                
-                for(int k = i + 1; k < verletComponents.Count; k++)
+
+                List<VerletComponent> collisions = new List<VerletComponent>();
+                quadTree.Retrieve(collisions, verletComponent1);
+
+                for (int k = i + 1; k < collisions.Count; k++)
                 {
                     verletComponent2 = verletComponents[k];
                     collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
@@ -113,7 +115,7 @@ namespace MonoGameVerlet.Verlet
                     float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
                     float minDist = verletComponent1.Radius + verletComponent2.Radius;
 
-                    if(dist < minDist)
+                    if (dist < minDist)
                     {
                         n = collisionAxis / dist;
                         float delta = minDist - dist;
