@@ -88,7 +88,7 @@ namespace MonoGameVerlet.DataStructures
 				}
 			}
 			// Object can completely fit within the right quadrants
-			else if (pRect.Bounds.X > verticalMidpoint)
+			else if (pRect.Bounds.X >= verticalMidpoint)
 			{
 				if (topQuadrant)
 				{

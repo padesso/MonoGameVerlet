@@ -107,7 +107,7 @@ namespace MonoGameVerlet.Verlet
                 List<VerletComponent> collisions = new List<VerletComponent>();
                 quadTree.Retrieve(collisions, verletComponent1);
 
-                for (int k = i + 1; k < collisions.Count; k++)
+                for (int k = 0; k < collisions.Count; k++)
                 {
                     verletComponent2 = verletComponents[k];
                     collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
