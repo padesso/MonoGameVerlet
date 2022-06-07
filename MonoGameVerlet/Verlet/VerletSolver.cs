@@ -48,15 +48,12 @@ namespace MonoGameVerlet.Verlet
             float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / subSteps);
             for (int subStep = subSteps; subStep > 0; subStep--)
             {
-                
                 applyGravity();
                 applyConstraint();
+                quadTree.Update(gameTime, verletComponents);
                 solveCollisions();
                 updatePositions(subDt);
-                
             }
-
-            quadTree.Update(gameTime, verletComponents);
 
             base.Update(gameTime);
         }

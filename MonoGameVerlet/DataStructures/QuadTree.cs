@@ -76,7 +76,7 @@ namespace MonoGameVerlet.DataStructures
 			bool bottomQuadrant = (pRect.Bounds.Y > horizontalMidpoint);
 
 			// Object can completely fit within the left quadrants
-			if (pRect.Bounds.X < verticalMidpoint && bounds.X + pRect.Bounds.Width < verticalMidpoint)
+			if (pRect.Bounds.X < verticalMidpoint && pRect.Bounds.X + pRect.Bounds.Width < verticalMidpoint)
 			{
 				if (topQuadrant)
 				{
