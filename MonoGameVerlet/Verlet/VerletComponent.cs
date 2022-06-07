@@ -18,14 +18,14 @@ namespace MonoGameVerlet.Verlet
         private Vector2 positionOld = Vector2.Zero;
         private Vector2 acceleration = Vector2.Zero;
         
-        public RectangleF Bounds;
+        public Rectangle Bounds;
 
         public VerletComponent(Vector2 initialPosition, float radius = 15f)
         {
             positionOld = initialPosition;
             PositionCurrent = initialPosition;
             Radius = radius;
-            Bounds = new RectangleF(initialPosition.X, initialPosition.Y, (radius * 2), (radius * 2));
+            Bounds = new Rectangle((int)initialPosition.X, (int)initialPosition.Y, (int)(radius * 2), (int)(radius * 2));
         }
 
         public void Update(float dt)
@@ -41,7 +41,7 @@ namespace MonoGameVerlet.Verlet
             //Reset acceleration
             acceleration = Vector2.Zero;
 
-            Bounds = new RectangleF(PositionCurrent.X, PositionCurrent.Y, (Radius * 2), (Radius * 2));
+            Bounds = new Rectangle((int)PositionCurrent.X, (int)PositionCurrent.Y, (int)(Radius * 2), (int)(Radius * 2));
         }
 
         public void Accelerate(Vector2 acc)
