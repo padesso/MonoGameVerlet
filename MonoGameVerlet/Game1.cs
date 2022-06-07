@@ -40,7 +40,7 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             debugFont = Content.Load<SpriteFont>("Debug");
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this,2 );           
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 3);           
         }
 
         protected override void Update(GameTime gameTime)
@@ -49,11 +49,13 @@ namespace MonoGameVerlet
                 Exit();
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay)
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
             {
+                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
                 verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
                 verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 5));
                 verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 5));
                 spawnTime = 0;
             }
 
