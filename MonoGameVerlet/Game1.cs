@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.ImGui;
+using MonoGame.ImGui.Standard;
 using MonoGameVerlet.Verlet;
 using System;
 
@@ -19,6 +22,7 @@ namespace MonoGameVerlet
         private double spawnTime = 0;
 
         SpriteFont debugFont;
+        public ImGUIRenderer GuiRenderer; 
 
         public Game1()
         {
@@ -32,6 +36,8 @@ namespace MonoGameVerlet
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
+
+            GuiRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
 
             base.Initialize();
         }
@@ -80,6 +86,13 @@ namespace MonoGameVerlet
             spriteBatch.DrawString(debugFont, "Number objects: " + verletSolver.NumberVerletComponents, new Vector2(10, 30), Color.White);
             spriteBatch.DrawString(debugFont, "Substeps: " + verletSolver.SubSteps, new Vector2(10, 50), Color.White);
             spriteBatch.End();
+
+            GuiRenderer.BeginLayout(gameTime);
+
+            //Insert Your ImGui code
+            ImGui.Text("Test");
+
+            GuiRenderer.EndLayout();
 
             base.Draw(gameTime);
         }
