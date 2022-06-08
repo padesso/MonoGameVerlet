@@ -132,7 +132,7 @@ namespace MonoGameVerlet.Verlet
         {
             spriteBatch.Begin();
             ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
-            quadTree.Draw(spriteBatch, GraphicsDevice);
+            //quadTree.Draw(spriteBatch, GraphicsDevice);
             spriteBatch.End();
 
             foreach (var verletComponent in verletComponents)

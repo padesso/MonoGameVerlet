@@ -40,7 +40,7 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             debugFont = Content.Load<SpriteFont>("Debug");
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 3);           
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);           
         }
 
         protected override void Update(GameTime gameTime)
@@ -51,11 +51,11 @@ namespace MonoGameVerlet
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
             {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10));
+                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10));
+                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10));
+                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10));
+                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10));
                 spawnTime = 0;
             }
 
@@ -66,7 +66,7 @@ namespace MonoGameVerlet
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            GraphicsDevice.Clear(Color.Black);
 
             verletSolver.Draw(gameTime);
 
