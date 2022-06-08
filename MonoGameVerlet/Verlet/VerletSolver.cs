@@ -25,6 +25,9 @@ namespace MonoGameVerlet.Verlet
         public int NumberVerletComponents { get => verletComponents.Count; }
         public int SubSteps;
 
+        public bool UseQuadTree;
+        public bool DrawQuadTree = true;
+
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
@@ -130,7 +133,12 @@ namespace MonoGameVerlet.Verlet
         {
             spriteBatch.Begin();
             ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
-            //quadTree.Draw(spriteBatch, GraphicsDevice);
+
+            if (DrawQuadTree)
+            {
+                quadTree.Draw(spriteBatch, GraphicsDevice);
+            }
+
             spriteBatch.End();
 
             foreach (var verletComponent in verletComponents)

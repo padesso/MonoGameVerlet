@@ -86,10 +86,12 @@ namespace MonoGameVerlet
 
             ImGui.Begin("Debug Settings");
             ImGui.SetWindowPos(new System.Numerics.Vector2(10, 10));
-            ImGui.SetWindowSize(new System.Numerics.Vector2(250, 100));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(250, 200));
             ImGui.Text(fps);
             ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
             ImGui.SliderInt("Substeps: ", ref verletSolver.SubSteps, 0, 10);
+            ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
+            ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
 
             GuiRenderer.EndLayout();
 
