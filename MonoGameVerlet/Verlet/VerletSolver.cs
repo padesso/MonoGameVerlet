@@ -19,13 +19,11 @@ namespace MonoGameVerlet.Verlet
         private List<VerletComponent> verletComponents;
         private QuadTree quadTree;
 
-        private int subSteps;
-
         private Vector2 constraintPosition;
         private float constraintRadius;
         
         public int NumberVerletComponents { get => verletComponents.Count; }
-        public int SubSteps { get => subSteps; }
+        public int SubSteps;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
@@ -35,7 +33,7 @@ namespace MonoGameVerlet.Verlet
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
             this.constraintRadius = constraintRadius;
-            this.subSteps = subSteps;
+            this.SubSteps = subSteps;
         }
 
         public override void Initialize()
@@ -45,8 +43,8 @@ namespace MonoGameVerlet.Verlet
 
         public override void Update(GameTime gameTime)
         {
-            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / subSteps);
-            for (int subStep = subSteps; subStep > 0; subStep--)
+            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / SubSteps);
+            for (int subStep = SubSteps; subStep > 0; subStep--)
             {
                 applyGravity();
                 applyConstraint();

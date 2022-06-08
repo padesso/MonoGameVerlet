@@ -21,7 +21,7 @@ namespace MonoGameVerlet
         private double spawnDelay = 250; //ms
         private double spawnTime = 0;
 
-        SpriteFont debugFont;
+        private SpriteFont debugFont;
         public ImGUIRenderer GuiRenderer; 
 
         public Game1()
@@ -76,21 +76,20 @@ namespace MonoGameVerlet
 
             verletSolver.Draw(gameTime);
 
+            //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             frameCounter.Update(deltaTime);
             var fps = string.Format("FPS: {0}", frameCounter.AverageFramesPerSecond);
 
-            spriteBatch.Begin();
-            spriteBatch.DrawString(debugFont, fps, new Vector2(10, 10), Color.White);
-            spriteBatch.DrawString(debugFont, "Number objects: " + verletSolver.NumberVerletComponents, new Vector2(10, 30), Color.White);
-            spriteBatch.DrawString(debugFont, "Substeps: " + verletSolver.SubSteps, new Vector2(10, 50), Color.White);
-            spriteBatch.End();
-
+            //ImGUI
             GuiRenderer.BeginLayout(gameTime);
 
-            //Insert Your ImGui code
-            ImGui.Text("Test");
+            ImGui.Begin("Debug Settings");
+            ImGui.SetWindowPos(new System.Numerics.Vector2(10, 10));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(250, 100));
+            ImGui.Text(fps);
+            ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
+            ImGui.SliderInt("Substeps: ", ref verletSolver.SubSteps, 0, 10);
 
             GuiRenderer.EndLayout();
 
