@@ -22,8 +22,8 @@ namespace MonoGameVerlet
         private double spawnTime = 0;
 
         private SpriteFont debugFont;
-        public ImGUIRenderer GuiRenderer; 
-
+        public ImGUIRenderer GuiRenderer;
+        private bool reset = false;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -51,8 +51,11 @@ namespace MonoGameVerlet
 
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if(reset)
+            {
+                verletSolver.Reset();
+                reset = false;
+            }
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
@@ -92,6 +95,7 @@ namespace MonoGameVerlet
             ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 0, 10);
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
+            reset = ImGui.Button("Reset");
 
             GuiRenderer.EndLayout();
 

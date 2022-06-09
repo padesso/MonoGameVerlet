@@ -59,6 +59,11 @@ namespace MonoGameVerlet.Verlet
             base.Update(gameTime);
         }
 
+        internal void Reset()
+        {
+            verletComponents.Clear();
+        }
+
         private void updatePositions(float dt)
         {
             foreach (var verletComponent in verletComponents)
