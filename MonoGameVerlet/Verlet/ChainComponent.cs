@@ -38,6 +38,29 @@ namespace MonoGameVerlet.Verlet
             }
         }
 
+        public ChainComponent(int numLinks, Vector2 startPosition, int radius, float targetDist)
+        {
+            TargetDist = targetDist;
+
+            if (numLinks < 3)
+                numLinks = 3;
+
+            Links = new VerletComponent[numLinks];
+
+            for (int i = 0; i < numLinks; i++)
+            {
+                if (i == 0)
+                {
+                    Links[i] = new VerletComponent(startPosition, radius, true);
+                }
+                else if (i > 0)
+                {
+                    //TODO: interpolate between start and end positions and add accurately
+                    Links[i] = new VerletComponent(new Vector2(startPosition.X, startPosition.Y + radius * 2 * i), radius, false);
+                }
+            }
+        }
+
         public void Update(float dt)
         {
             for (int i = 0; i < Links.Length - 1; i++)
