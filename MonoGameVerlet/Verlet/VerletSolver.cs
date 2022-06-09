@@ -19,13 +19,14 @@ namespace MonoGameVerlet.Verlet
         private List<VerletComponent> verletComponents;
         private QuadTree quadTree;
 
-        private int subSteps;
-
         private Vector2 constraintPosition;
         private float constraintRadius;
         
         public int NumberVerletComponents { get => verletComponents.Count; }
-        public int SubSteps { get => subSteps; }
+        public int SubSteps;
+
+        public bool UseQuadTree = true;
+        public bool DrawQuadTree = true;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
@@ -35,7 +36,7 @@ namespace MonoGameVerlet.Verlet
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
             this.constraintRadius = constraintRadius;
-            this.subSteps = subSteps;
+            this.SubSteps = subSteps;
         }
 
         public override void Initialize()
@@ -45,8 +46,8 @@ namespace MonoGameVerlet.Verlet
 
         public override void Update(GameTime gameTime)
         {
-            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / subSteps);
-            for (int subStep = subSteps; subStep > 0; subStep--)
+            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / SubSteps);
+            for (int subStep = SubSteps; subStep > 0; subStep--)
             {
                 applyGravity();
                 applyConstraint();
@@ -95,34 +96,66 @@ namespace MonoGameVerlet.Verlet
 
         private void solveCollisions()
         {
-            Vector2 collisionAxis;
-            Vector2 n;
-            VerletComponent verletComponent1;
-            VerletComponent verletComponent2;
-
-            for (int i = 0; i < verletComponents.Count; i++)
+            if (UseQuadTree)
             {
-                List<VerletComponent> collisions = new List<VerletComponent>();
-                verletComponent1 = verletComponents[i];
-                quadTree.Retrieve(collisions, verletComponent1);
+                Vector2 collisionAxis;
+                Vector2 n;
+                VerletComponent verletComponent1;
+                VerletComponent verletComponent2;
 
-                for (int k = 0; k < collisions.Count; k++)
+                for (int i = 0; i < verletComponents.Count; i++)
                 {
-                    if (verletComponents[i] == collisions[k]) 
-                        continue;
+                    List<VerletComponent> collisions = new List<VerletComponent>();
+                    verletComponent1 = verletComponents[i];
+                    quadTree.Retrieve(collisions, verletComponent1);
 
-                    verletComponent2 = collisions[k];
-                    collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
-                    collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
-                    float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
-                    float minDist = verletComponent1.Radius + verletComponent2.Radius;
-
-                    if (dist < minDist)
+                    for (int k = 0; k < collisions.Count; k++)
                     {
-                        n = collisionAxis / dist;
-                        float delta = minDist - dist;
-                        verletComponent1.PositionCurrent += 0.5f * delta * n;
-                        verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        if (verletComponents[i] == collisions[k])
+                            continue;
+
+                        verletComponent2 = collisions[k];
+                        collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
+                        collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
+                        float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
+                        float minDist = verletComponent1.Radius + verletComponent2.Radius;
+
+                        if (dist < minDist)
+                        {
+                            n = collisionAxis / dist;
+                            float delta = minDist - dist;
+                            verletComponent1.PositionCurrent += 0.5f * delta * n;
+                            verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Vector2 collisionAxis;
+                Vector2 n;
+                VerletComponent verletComponent1;
+                VerletComponent verletComponent2;
+
+                for (int i = 0; i < verletComponents.Count; i++)
+                {
+                    verletComponent1 = verletComponents[i];
+
+                    for (int k = i + 1; k < verletComponents.Count; k++)
+                    {
+                        verletComponent2 = verletComponents[k];
+                        collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
+                        collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
+                        float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
+                        float minDist = verletComponent1.Radius + verletComponent2.Radius;
+
+                        if (dist < minDist)
+                        {
+                            n = collisionAxis / dist;
+                            float delta = minDist - dist;
+                            verletComponent1.PositionCurrent += 0.5f * delta * n;
+                            verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        }
                     }
                 }
             }
@@ -132,7 +165,12 @@ namespace MonoGameVerlet.Verlet
         {
             spriteBatch.Begin();
             ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
-            //quadTree.Draw(spriteBatch, GraphicsDevice);
+
+            if (DrawQuadTree && UseQuadTree)
+            {
+                quadTree.Draw(spriteBatch, GraphicsDevice);
+            }
+
             spriteBatch.End();
 
             foreach (var verletComponent in verletComponents)

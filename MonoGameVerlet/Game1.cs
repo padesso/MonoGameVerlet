@@ -1,7 +1,10 @@
-﻿using Microsoft.Xna.Framework;
+﻿using ImGuiNET;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using MonoGame.Extended;
+using MonoGame.ImGui;
+using MonoGame.ImGui.Standard;
 using MonoGameVerlet.Verlet;
 using System;
 
@@ -18,7 +21,8 @@ namespace MonoGameVerlet
         private double spawnDelay = 250; //ms
         private double spawnTime = 0;
 
-        SpriteFont debugFont;
+        private SpriteFont debugFont;
+        public ImGUIRenderer GuiRenderer; 
 
         public Game1()
         {
@@ -32,6 +36,8 @@ namespace MonoGameVerlet
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
             graphics.ApplyChanges();
+
+            GuiRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
 
             base.Initialize();
         }
@@ -70,16 +76,24 @@ namespace MonoGameVerlet
 
             verletSolver.Draw(gameTime);
 
+            //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-
             frameCounter.Update(deltaTime);
             var fps = string.Format("FPS: {0}", frameCounter.AverageFramesPerSecond);
 
-            spriteBatch.Begin();
-            spriteBatch.DrawString(debugFont, fps, new Vector2(10, 10), Color.White);
-            spriteBatch.DrawString(debugFont, "Number objects: " + verletSolver.NumberVerletComponents, new Vector2(10, 30), Color.White);
-            spriteBatch.DrawString(debugFont, "Substeps: " + verletSolver.SubSteps, new Vector2(10, 50), Color.White);
-            spriteBatch.End();
+            //ImGUI
+            GuiRenderer.BeginLayout(gameTime);
+
+            ImGui.Begin("Debug Settings");
+            ImGui.SetWindowPos(new System.Numerics.Vector2(10, 10));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(250, 200));
+            ImGui.Text(fps);
+            ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
+            ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 0, 10);
+            ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
+            ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
+
+            GuiRenderer.EndLayout();
 
             base.Draw(gameTime);
         }

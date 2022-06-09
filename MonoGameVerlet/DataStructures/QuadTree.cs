@@ -154,13 +154,6 @@ namespace MonoGameVerlet.DataStructures
 				{
 					nodes[index].Retrieve(returnedObjs, obj);
 				}
-				//else
-				//{
-				//	for (int i = 0; i < nodes.Length; i++)
-				//	{
-				//		nodes[i].Retrieve(returnedObjs, obj);
-				//	}
-				//}
 			}
 			returnedObjs.AddRange(objects);
 		}
@@ -172,7 +165,6 @@ namespace MonoGameVerlet.DataStructures
 				if (node != null)
 				{
 					node.Draw(spriteBatch, g);
-					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 					ShapeExtensions.DrawRectangle(spriteBatch, new Rectangle(node.bounds.Left, node.bounds.Top, node.bounds.Width, node.bounds.Height), Color.White);
 				}
 			}
@@ -186,27 +178,6 @@ namespace MonoGameVerlet.DataStructures
 			{
 				Insert(m);
 			}
-
-			//for (int i = 0; i < VerletComponents.Count; i++)
-			//{
-			//	returnObjects.Clear();
-			//	Retrieve(returnObjects, VerletComponents[i]);
-
-			//	for (int x = 0; x < returnObjects.Count; x++)
-			//	{
-			//		// Run collision detection algorithm between objects
-			//		// i.e. your Rectangle.IntersectsWith(x)
-
-			//		// Don't check for collisions with self object
-			//		if (VerletComponents[i] == returnObjects[x]) { continue; }
-
-			//		if (VerletComponents[i].Bounds.Intersects(returnObjects[x].Bounds))
-			//		{
-			//			VerletComponents[i].Velocity = -VerletComponents[i].Velocity;
-			//		}
-			//	}
-			//	VerletComponents[i].Update(gameTime);
-			//}
 		}
 	}
 }
