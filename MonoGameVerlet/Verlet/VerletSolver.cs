@@ -25,7 +25,7 @@ namespace MonoGameVerlet.Verlet
         public int NumberVerletComponents { get => verletComponents.Count; }
         public int SubSteps;
 
-        public bool UseQuadTree;
+        public bool UseQuadTree = true;
         public bool DrawQuadTree = true;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
@@ -96,34 +96,66 @@ namespace MonoGameVerlet.Verlet
 
         private void solveCollisions()
         {
-            Vector2 collisionAxis;
-            Vector2 n;
-            VerletComponent verletComponent1;
-            VerletComponent verletComponent2;
-
-            for (int i = 0; i < verletComponents.Count; i++)
+            if (UseQuadTree)
             {
-                List<VerletComponent> collisions = new List<VerletComponent>();
-                verletComponent1 = verletComponents[i];
-                quadTree.Retrieve(collisions, verletComponent1);
+                Vector2 collisionAxis;
+                Vector2 n;
+                VerletComponent verletComponent1;
+                VerletComponent verletComponent2;
 
-                for (int k = 0; k < collisions.Count; k++)
+                for (int i = 0; i < verletComponents.Count; i++)
                 {
-                    if (verletComponents[i] == collisions[k]) 
-                        continue;
+                    List<VerletComponent> collisions = new List<VerletComponent>();
+                    verletComponent1 = verletComponents[i];
+                    quadTree.Retrieve(collisions, verletComponent1);
 
-                    verletComponent2 = collisions[k];
-                    collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
-                    collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
-                    float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
-                    float minDist = verletComponent1.Radius + verletComponent2.Radius;
-
-                    if (dist < minDist)
+                    for (int k = 0; k < collisions.Count; k++)
                     {
-                        n = collisionAxis / dist;
-                        float delta = minDist - dist;
-                        verletComponent1.PositionCurrent += 0.5f * delta * n;
-                        verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        if (verletComponents[i] == collisions[k])
+                            continue;
+
+                        verletComponent2 = collisions[k];
+                        collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
+                        collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
+                        float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
+                        float minDist = verletComponent1.Radius + verletComponent2.Radius;
+
+                        if (dist < minDist)
+                        {
+                            n = collisionAxis / dist;
+                            float delta = minDist - dist;
+                            verletComponent1.PositionCurrent += 0.5f * delta * n;
+                            verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Vector2 collisionAxis;
+                Vector2 n;
+                VerletComponent verletComponent1;
+                VerletComponent verletComponent2;
+
+                for (int i = 0; i < verletComponents.Count; i++)
+                {
+                    verletComponent1 = verletComponents[i];
+
+                    for (int k = i + 1; k < verletComponents.Count; k++)
+                    {
+                        verletComponent2 = verletComponents[k];
+                        collisionAxis.X = verletComponent1.PositionCurrent.X - verletComponent2.PositionCurrent.X;
+                        collisionAxis.Y = verletComponent1.PositionCurrent.Y - verletComponent2.PositionCurrent.Y;
+                        float dist = Vector2.Distance(verletComponent1.PositionCurrent, verletComponent2.PositionCurrent);
+                        float minDist = verletComponent1.Radius + verletComponent2.Radius;
+
+                        if (dist < minDist)
+                        {
+                            n = collisionAxis / dist;
+                            float delta = minDist - dist;
+                            verletComponent1.PositionCurrent += 0.5f * delta * n;
+                            verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                        }
                     }
                 }
             }
@@ -134,7 +166,7 @@ namespace MonoGameVerlet.Verlet
             spriteBatch.Begin();
             ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
 
-            if (DrawQuadTree)
+            if (DrawQuadTree && UseQuadTree)
             {
                 quadTree.Draw(spriteBatch, GraphicsDevice);
             }
