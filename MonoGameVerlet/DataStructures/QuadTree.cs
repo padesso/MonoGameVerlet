@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MonoGameVerlet.DataStructures
 {
-	//https://github.com/SoDamnMetal/Spatial-Partition/blob/main/QuadTrees/VerletComponents/QuadTree.cs
+	//https://github.com/SoDamnMetal/Spatial-Partition/tree/main/QuadTrees
 
 	public class QuadTree
 	{
