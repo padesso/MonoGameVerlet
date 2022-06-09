@@ -14,7 +14,7 @@ namespace MonoGameVerlet.Verlet
     public class VerletSolver : DrawableGameComponent
     {
         private SpriteBatch spriteBatch;
-        public Vector2 Gravity = new Vector2(0f, 1000f);
+        public Vector2 Gravity = new Vector2(0f, 5000f);
 
         private List<VerletComponent> verletComponents;
         private QuadTree quadTree;
@@ -26,7 +26,7 @@ namespace MonoGameVerlet.Verlet
         public int SubSteps;
 
         public bool UseQuadTree = true;
-        public bool DrawQuadTree = true;
+        public bool DrawQuadTree = false;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {

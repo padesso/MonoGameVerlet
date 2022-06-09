@@ -12,8 +12,8 @@ namespace MonoGameVerlet.DataStructures
 
 	public class QuadTree
 	{
-		private readonly int MAX_OBJECTS = 5;
-		private readonly int MAX_LEVELS = 10;
+		private readonly int MAX_OBJECTS = 10;
+		private readonly int MAX_LEVELS = 5;
 
 		private int level;
 		private List<VerletComponent> objects; //convert to your object type

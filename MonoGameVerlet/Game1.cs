@@ -18,7 +18,7 @@ namespace MonoGameVerlet
         private SpriteBatch spriteBatch;
 
         private VerletSolver verletSolver;
-        private double spawnDelay = 250; //ms
+        private double spawnDelay = 125; //ms
         private double spawnTime = 0;
 
         private SpriteFont debugFont;
@@ -60,11 +60,11 @@ namespace MonoGameVerlet
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
             {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10));
+                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
                 spawnTime = 0;
             }
 
