@@ -38,26 +38,22 @@ namespace MonoGameVerlet.Verlet
             }
         }
 
-        public void Update(float dt, int subSteps)
+        public void Update(float dt)
         {
-            float subDt = dt / subSteps;
-            for (int subStep = subSteps; subStep > 0; subStep--)
+            for (int i = 0; i < Links.Length - 1; i++)
             {
-                for (int i = 0; i < Links.Length - 1; i++)
-                {
-                    VerletComponent component1 = Links[i];
-                    VerletComponent component2 = Links[i + 1];
-                    Vector2 axis = component1.PositionCurrent - component2.PositionCurrent;
-                    float dist = Vector2.Distance(component1.PositionCurrent, component2.PositionCurrent); // axis.Length();
-                    Vector2 n = axis / dist;
-                    float delta = TargetDist - dist;
+                VerletComponent component1 = Links[i];
+                VerletComponent component2 = Links[i + 1];
+                Vector2 axis = component1.PositionCurrent - component2.PositionCurrent;
+                float dist = Vector2.Distance(component1.PositionCurrent, component2.PositionCurrent); // axis.Length();
+                Vector2 n = axis / dist;
+                float delta = TargetDist - dist;
 
-                    if (!component1.IsStatic)
-                        component1.PositionCurrent += 0.5f * delta * n;
+                if (!component1.IsStatic)
+                    component1.PositionCurrent += 0.5f * delta * n;
 
-                    if (!component2.IsStatic)
-                        component2.PositionCurrent -= 0.5f * delta * n;
-                }
+                if (!component2.IsStatic)
+                    component2.PositionCurrent -= 0.5f * delta * n;
             }
         }
     }

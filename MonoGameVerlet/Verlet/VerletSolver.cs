@@ -44,19 +44,13 @@ namespace MonoGameVerlet.Verlet
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(float dt)
         {
-            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / SubSteps);
-            for (int subStep = SubSteps; subStep > 0; subStep--)
-            {
-                applyGravity();
-                applyConstraint();
-                quadTree.Update(gameTime, verletComponents);
-                solveCollisions();
-                updatePositions(subDt);
-            }
-
-            base.Update(gameTime);
+            applyGravity();
+            applyConstraint();
+            quadTree.Update(verletComponents);
+            solveCollisions();
+            updatePositions(dt);
         }
 
         internal void Reset()

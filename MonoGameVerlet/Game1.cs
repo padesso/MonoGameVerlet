@@ -49,10 +49,9 @@ namespace MonoGameVerlet
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 2);
-            verletSolver.AddVerletComponent(new Vector2(1000, 300), 25, false);
 
-            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 21); //TODO: do better
-            verletSolver.AddChain(chain);         
+            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 40); //TODO: do better
+            verletSolver.AddChain(chain);
         }
 
         protected override void Update(GameTime gameTime)
@@ -63,7 +62,7 @@ namespace MonoGameVerlet
                 reset = false;
             }
 
-            //spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
             if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 200)
             {
                 verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
@@ -74,12 +73,12 @@ namespace MonoGameVerlet
                 spawnTime = 0;
             }
 
-            spawnTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-
-            verletSolver.Update(gameTime);
-
-            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            chain.Update(deltaTime, verletSolver.SubSteps);
+            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / verletSolver.SubSteps);
+            for (int subStep = verletSolver.SubSteps; subStep > 0; subStep--)
+            {
+                verletSolver.Update(subDt);
+                chain.Update(subDt);
+            }
 
             base.Update(gameTime);
         }

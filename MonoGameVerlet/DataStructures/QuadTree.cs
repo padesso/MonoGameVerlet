@@ -170,9 +170,8 @@ namespace MonoGameVerlet.DataStructures
 			}
 		}
 
-		public void Update(GameTime gameTime, List<VerletComponent> VerletComponents)
+		public void Update(List<VerletComponent> VerletComponents)
 		{
-
 			Clear();
 			foreach (var m in VerletComponents)
 			{
