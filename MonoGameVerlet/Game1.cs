@@ -48,9 +48,9 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 2);
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
 
-            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 40); //TODO: do better
+            chain = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40); //TODO: do better
             verletSolver.AddChain(chain);
         }
 
@@ -63,13 +63,13 @@ namespace MonoGameVerlet
             }
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 200)
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 500)
             {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 5));
+                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 5));
                 spawnTime = 0;
             }
 
