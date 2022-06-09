@@ -8,7 +8,7 @@ using System.Text;
 
 namespace MonoGameVerlet.DataStructures
 {
-	//https://github.com/SoDamnMetal/Spatial-Partition/blob/main/QuadTrees/VerletComponents/QuadTree.cs
+	//https://github.com/SoDamnMetal/Spatial-Partition/tree/main/QuadTrees
 
 	public class QuadTree
 	{
@@ -170,9 +170,8 @@ namespace MonoGameVerlet.DataStructures
 			}
 		}
 
-		public void Update(GameTime gameTime, List<VerletComponent> VerletComponents)
+		public void Update(List<VerletComponent> VerletComponents)
 		{
-
 			Clear();
 			foreach (var m in VerletComponents)
 			{

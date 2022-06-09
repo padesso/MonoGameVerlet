@@ -44,19 +44,13 @@ namespace MonoGameVerlet.Verlet
             base.Initialize();
         }
 
-        public override void Update(GameTime gameTime)
+        public void Update(float dt)
         {
-            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / SubSteps);
-            for (int subStep = SubSteps; subStep > 0; subStep--)
-            {
-                applyGravity();
-                applyConstraint();
-                quadTree.Update(gameTime, verletComponents);
-                solveCollisions();
-                updatePositions(subDt);
-            }
-
-            base.Update(gameTime);
+            applyGravity();
+            applyConstraint();
+            quadTree.Update(verletComponents);
+            solveCollisions();
+            updatePositions(dt);
         }
 
         internal void Reset()
@@ -112,6 +106,9 @@ namespace MonoGameVerlet.Verlet
                 {
                     List<VerletComponent> collisions = new List<VerletComponent>();
                     verletComponent1 = verletComponents[i];
+                    if (verletComponent1.IsStatic)
+                        continue;
+
                     quadTree.Retrieve(collisions, verletComponent1);
 
                     for (int k = 0; k < collisions.Count; k++)
@@ -130,7 +127,11 @@ namespace MonoGameVerlet.Verlet
                             n = collisionAxis / dist;
                             float delta = minDist - dist;
                             verletComponent1.PositionCurrent += 0.5f * delta * n;
-                            verletComponent2.PositionCurrent -= 0.5f * delta * n;
+
+                            if (!verletComponent2.IsStatic)
+                            {
+                                verletComponent2.PositionCurrent -= 0.5f * delta * n;
+                            }
                         }
                     }
                 }
@@ -181,16 +182,24 @@ namespace MonoGameVerlet.Verlet
             foreach (var verletComponent in verletComponents)
             {
                 spriteBatch.Begin();
-                ShapeExtensions.DrawCircle(spriteBatch, verletComponent.PositionCurrent, verletComponent.Radius, 10, Color.White);
+                ShapeExtensions.DrawCircle(spriteBatch, verletComponent.PositionCurrent, verletComponent.Radius, 36, Color.White);
                 spriteBatch.End();
             }
 
             base.Draw(gameTime);
         }
 
-        public void AddVerletComponent(Vector2 position, float radius)
+        public void AddVerletComponent(Vector2 position, float radius, bool isStatic = false)
         {
-            verletComponents.Add(new VerletComponent(position, radius));
+            verletComponents.Add(new VerletComponent(position, radius, isStatic));
+        }
+
+        public void AddChain(ChainComponent chain)
+        {
+            foreach(var link in chain.Links)
+            {
+                verletComponents.Add(link);
+            }
         }
     }
 }

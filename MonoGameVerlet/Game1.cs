@@ -7,6 +7,7 @@ using MonoGame.ImGui;
 using MonoGame.ImGui.Standard;
 using MonoGameVerlet.Verlet;
 using System;
+using System.Collections.Generic;
 
 namespace MonoGameVerlet
 {
@@ -21,7 +22,8 @@ namespace MonoGameVerlet
         private double spawnDelay = 125; //ms
         private double spawnTime = 0;
 
-        private SpriteFont debugFont;
+        private ChainComponent chain;
+
         public ImGUIRenderer GuiRenderer;
         private bool reset = false;
         public Game1()
@@ -45,8 +47,11 @@ namespace MonoGameVerlet
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            debugFont = Content.Load<SpriteFont>("Debug");
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);           
+
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 2);
+
+            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 40); //TODO: do better
+            verletSolver.AddChain(chain);
         }
 
         protected override void Update(GameTime gameTime)
@@ -58,7 +63,7 @@ namespace MonoGameVerlet
             }
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 200)
             {
                 verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
                 verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
@@ -68,7 +73,12 @@ namespace MonoGameVerlet
                 spawnTime = 0;
             }
 
-            verletSolver.Update(gameTime);
+            float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / verletSolver.SubSteps);
+            for (int subStep = verletSolver.SubSteps; subStep > 0; subStep--)
+            {
+                verletSolver.Update(subDt);
+                chain.Update(subDt);
+            }
 
             base.Update(gameTime);
         }
@@ -78,6 +88,8 @@ namespace MonoGameVerlet
             GraphicsDevice.Clear(Color.Black);
 
             verletSolver.Draw(gameTime);
+
+            //chain.Draw(spriteBatch, GraphicsDevice);
 
             //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -92,7 +104,7 @@ namespace MonoGameVerlet
             ImGui.SetWindowSize(new System.Numerics.Vector2(250, 200));
             ImGui.Text(fps);
             ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
-            ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 0, 10);
+            ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 1, 10);
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
             reset = ImGui.Button("Reset");

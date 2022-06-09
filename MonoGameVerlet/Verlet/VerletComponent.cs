@@ -20,26 +20,32 @@ namespace MonoGameVerlet.Verlet
         
         public Rectangle Bounds;
 
-        public VerletComponent(Vector2 initialPosition, float radius = 15f)
+        public bool IsStatic;
+
+        public VerletComponent(Vector2 initialPosition, float radius = 15f, bool isStatic = false)
         {
             positionOld = initialPosition;
             PositionCurrent = initialPosition;
             Radius = radius;
             Bounds = new Rectangle((int)initialPosition.X, (int)initialPosition.Y, (int)(radius * 2), (int)(radius * 2));
+            IsStatic = isStatic;    
         }
 
         public void Update(float dt)
         {
-            Vector2 velocity = PositionCurrent - positionOld;
-            
-            //Save current position
-            positionOld = PositionCurrent;
+            if (!IsStatic)
+            {
+                Vector2 velocity = PositionCurrent - positionOld;
 
-            //Perform Verlet Integration
-            PositionCurrent = PositionCurrent + velocity + Vector2.Multiply(acceleration, dt * dt);
+                //Save current position
+                positionOld = PositionCurrent;
 
-            //Reset acceleration
-            acceleration = Vector2.Zero;
+                //Perform Verlet Integration
+                PositionCurrent = PositionCurrent + velocity + Vector2.Multiply(acceleration, dt * dt);
+
+                //Reset acceleration
+                acceleration = Vector2.Zero;
+            }
 
             Bounds = new Rectangle((int)PositionCurrent.X, (int)PositionCurrent.Y, (int)(Radius * 2), (int)(Radius * 2));
         }
