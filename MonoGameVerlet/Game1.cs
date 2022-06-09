@@ -22,7 +22,8 @@ namespace MonoGameVerlet
         private double spawnDelay = 125; //ms
         private double spawnTime = 0;
 
-        private SpriteFont debugFont;
+        private ChainComponent chain;
+
         public ImGUIRenderer GuiRenderer;
         private bool reset = false;
         public Game1()
@@ -46,10 +47,11 @@ namespace MonoGameVerlet
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            debugFont = Content.Load<SpriteFont>("Debug");
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
 
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
             verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
+
+            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20);
         }
 
         protected override void Update(GameTime gameTime)
@@ -71,11 +73,8 @@ namespace MonoGameVerlet
                 spawnTime = 0;
             }
 
-            List<Link> chain = new List<Link>();
-            for (int i = 0; i < 10; i++)
-            {
-                chain.Add(new Link(new VerletComponent(new Vector2(750, 600), 15), new VerletComponent(new Vector2(750, 600), 15), 20));
-            }
+            var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            chain.Update(deltaTime);
 
             verletSolver.Update(gameTime);
 
@@ -87,6 +86,8 @@ namespace MonoGameVerlet
             GraphicsDevice.Clear(Color.Black);
 
             verletSolver.Draw(gameTime);
+
+            chain.Draw(spriteBatch, GraphicsDevice);
 
             //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
