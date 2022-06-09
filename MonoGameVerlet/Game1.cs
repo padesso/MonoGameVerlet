@@ -48,7 +48,7 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 1);
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 2);
             verletSolver.AddVerletComponent(new Vector2(1000, 300), 25, false);
 
             chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 21); //TODO: do better
@@ -64,20 +64,22 @@ namespace MonoGameVerlet
             }
 
             //spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            //if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
-            //{
-            //    verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
-            //    verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
-            //    verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
-            //    verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
-            //    verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
-            //    spawnTime = 0;
-            //}
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 200)
+            {
+                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
+                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
+                spawnTime = 0;
+            }
+
+            spawnTime += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             verletSolver.Update(gameTime);
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            chain.Update(deltaTime);
+            chain.Update(deltaTime, verletSolver.SubSteps);
 
             base.Update(gameTime);
         }
@@ -103,7 +105,7 @@ namespace MonoGameVerlet
             ImGui.SetWindowSize(new System.Numerics.Vector2(250, 200));
             ImGui.Text(fps);
             ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
-            ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 0, 10);
+            ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 1, 10);
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
             reset = ImGui.Button("Reset");
