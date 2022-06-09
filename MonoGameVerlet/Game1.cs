@@ -48,8 +48,8 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
-            //verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 1);
+            verletSolver.AddVerletComponent(new Vector2(1000, 300), 25, false);
 
             chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 21); //TODO: do better
             verletSolver.AddChain(chain);         
