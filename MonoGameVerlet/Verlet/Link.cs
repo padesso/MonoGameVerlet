@@ -18,14 +18,6 @@ namespace MonoGameVerlet.Verlet
             TargetDist = targetDist;
         }
 
-        public void Apply()
-        {
-            Vector2 axis = Component1.PositionCurrent - Component2.PositionCurrent;
-            float dist = axis.Length();
-            Vector2 n = axis / dist;
-            float delta = TargetDist - dist;
-            Component1.PositionCurrent += 0.5f * delta * n;
-            Component2.PositionCurrent -= 0.5f * delta * n;
-        }
+        
     }
 }

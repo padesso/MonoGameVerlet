@@ -49,9 +49,14 @@ namespace MonoGameVerlet
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
-            verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
+            //verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
 
-            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20);
+            chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 21); //TODO: do better
+
+            //foreach(var link in chain.Links)
+            //{
+            //    verletSolver.AddVerletComponent(link.PositionCurrent, link.Radius, link.IsStatic);
+            //}            
         }
 
         protected override void Update(GameTime gameTime)
@@ -62,16 +67,18 @@ namespace MonoGameVerlet
                 reset = false;
             }
 
-            spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
-            {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
-                spawnTime = 0;
-            }
+            //spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            //if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 2000)
+            //{
+            //    verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 2));
+            //    verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 2));
+            //    verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 2));
+            //    verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
+            //    verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
+            //    spawnTime = 0;
+            //}
+
+
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             chain.Update(deltaTime);
