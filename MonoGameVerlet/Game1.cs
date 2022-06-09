@@ -7,6 +7,7 @@ using MonoGame.ImGui;
 using MonoGame.ImGui.Standard;
 using MonoGameVerlet.Verlet;
 using System;
+using System.Collections.Generic;
 
 namespace MonoGameVerlet
 {
@@ -46,7 +47,9 @@ namespace MonoGameVerlet
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             debugFont = Content.Load<SpriteFont>("Debug");
-            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);           
+            verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
+
+            verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
         }
 
         protected override void Update(GameTime gameTime)
@@ -66,6 +69,12 @@ namespace MonoGameVerlet
                 verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 2));
                 verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 2));
                 spawnTime = 0;
+            }
+
+            List<Link> chain = new List<Link>();
+            for (int i = 0; i < 10; i++)
+            {
+                chain.Add(new Link(new VerletComponent(new Vector2(750, 600), 15), new VerletComponent(new Vector2(750, 600), 15), 20));
             }
 
             verletSolver.Update(gameTime);
