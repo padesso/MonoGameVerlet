@@ -29,7 +29,7 @@ namespace MonoGameVerlet.Verlet
                 else if(i > 0 && i < numLinks - 1)
                 {
                     //TODO: interpolate between start and end positions and add accurately
-                    Links[i] = new VerletComponent(new Vector2(startPosition.X + radius, startPosition.Y), radius, false);
+                    Links[i] = new VerletComponent(new Vector2(startPosition.X + radius * 2 * i, startPosition.Y), radius, false);
                 }
                 else
                 {
@@ -45,7 +45,7 @@ namespace MonoGameVerlet.Verlet
                 VerletComponent component1 = Links[i];
                 VerletComponent component2 = Links[i + 1];
                 Vector2 axis = component1.PositionCurrent - component2.PositionCurrent;
-                float dist = axis.Length();
+                float dist = Vector2.Distance(component1.PositionCurrent, component2.PositionCurrent); // axis.Length();
                 Vector2 n = axis / dist;
                 float delta = TargetDist - dist;
 
@@ -57,14 +57,14 @@ namespace MonoGameVerlet.Verlet
             }
         }
 
-        public void Draw(SpriteBatch spriteBatch, GraphicsDevice g)
-        {
-            for(int i = 0; i < Links.Length; i++)
-            {
-                spriteBatch.Begin();
-                ShapeExtensions.DrawCircle(spriteBatch, Links[i].PositionCurrent, Links[i].Radius, 36, Color.White);
-                spriteBatch.End();
-            }
-        }
+        //public void Draw(SpriteBatch spriteBatch, GraphicsDevice g)
+        //{
+        //    for(int i = 0; i < Links.Length; i++)
+        //    {
+        //        spriteBatch.Begin();
+        //        ShapeExtensions.DrawCircle(spriteBatch, Links[i].PositionCurrent, Links[i].Radius, 36, Color.White);
+        //        spriteBatch.End();
+        //    }
+        //}
     }
 }

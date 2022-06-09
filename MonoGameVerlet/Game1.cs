@@ -52,11 +52,7 @@ namespace MonoGameVerlet
             //verletSolver.AddVerletComponent(new Vector2(1000, 500), 75, true);
 
             chain = new ChainComponent(10, new Vector2(800, 400), new Vector2(1200, 400), 20, 21); //TODO: do better
-
-            //foreach(var link in chain.Links)
-            //{
-            //    verletSolver.AddVerletComponent(link.PositionCurrent, link.Radius, link.IsStatic);
-            //}            
+            verletSolver.AddChain(chain);         
         }
 
         protected override void Update(GameTime gameTime)
@@ -78,12 +74,10 @@ namespace MonoGameVerlet
             //    spawnTime = 0;
             //}
 
-
+            verletSolver.Update(gameTime);
 
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
             chain.Update(deltaTime);
-
-            verletSolver.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -94,7 +88,7 @@ namespace MonoGameVerlet
 
             verletSolver.Draw(gameTime);
 
-            chain.Draw(spriteBatch, GraphicsDevice);
+            //chain.Draw(spriteBatch, GraphicsDevice);
 
             //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;

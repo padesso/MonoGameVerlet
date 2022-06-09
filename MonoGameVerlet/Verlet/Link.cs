@@ -11,13 +11,11 @@ namespace MonoGameVerlet.Verlet
         public VerletComponent Component2;
         public float TargetDist;
 
-        public Link(VerletComponent component1, VerletComponent component2, float targetDist)
+        public Link(VerletComponent component1, VerletComponent component2)
         {
             Component1 = component1;
             Component2 = component2;
-            TargetDist = targetDist;
+            TargetDist = component1.Radius + component2.Radius;
         }
-
-        
     }
 }

@@ -199,5 +199,13 @@ namespace MonoGameVerlet.Verlet
         {
             verletComponents.Add(new VerletComponent(position, radius, isStatic));
         }
+
+        public void AddChain(ChainComponent chain)
+        {
+            foreach(var link in chain.Links)
+            {
+                verletComponents.Add(link);
+            }
+        }
     }
 }
