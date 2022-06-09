@@ -12,7 +12,7 @@ namespace MonoGameVerlet.DataStructures
 
 	public class QuadTree
 	{
-		private readonly int MAX_OBJECTS = 10;
+		private readonly int MAX_OBJECTS = 50;
 		private readonly int MAX_LEVELS = 5;
 
 		private int level;

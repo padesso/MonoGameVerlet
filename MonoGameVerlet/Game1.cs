@@ -63,7 +63,7 @@ namespace MonoGameVerlet
             }
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 500)
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 1000)
             {
                 verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
                 verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
@@ -105,6 +105,8 @@ namespace MonoGameVerlet
             ImGui.Text(fps);
             ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
             ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 1, 10);
+            ImGui.SliderFloat("Gravity X", ref verletSolver.Gravity.X, -5000, 5000);
+            ImGui.SliderFloat("Gravity Y", ref verletSolver.Gravity.Y, -5000, 5000);
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
             reset = ImGui.Button("Reset");
