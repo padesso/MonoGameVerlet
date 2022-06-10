@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGameVerlet.DataStructures;
+using MonoGameVerlet.Effects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,8 @@ namespace MonoGameVerlet.Verlet
     /// </summary>
     public class VerletSolver : DrawableGameComponent
     {
+        private BloomFilter bloomFilter;
+
         private Texture2D circleTexture;
 
         private SpriteBatch spriteBatch;
@@ -44,6 +47,12 @@ namespace MonoGameVerlet.Verlet
 
             circleTexture = Game.Content.Load<Texture2D>("Circle");
             random = new Random();
+
+            //Load our Bloomfilter!
+            bloomFilter = new BloomFilter();
+            bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); //TODO: verify width/height ok
+            bloomFilter.BloomPreset = BloomFilter.BloomPresets.SuperWide;
+            bloomFilter.BloomStrengthMultiplier = 10;
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -216,7 +225,11 @@ namespace MonoGameVerlet.Verlet
 
             foreach (var verletComponent in verletComponents)
             {
-                spriteBatch.Begin();
+                //spriteBatch.Begin();
+                spriteBatch.Begin(SpriteSortMode.Deferred, samplerState: SamplerState.PointClamp, blendState: BlendState.Additive);
+
+                Texture2D bloom = bloomFilter.Draw(circleTexture, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Height / 2);
+                Game.GraphicsDevice.SetRenderTarget(null);
 
                 spriteBatch.Draw(circleTexture, 
                     new Rectangle((int)verletComponent.PositionCurrent.X, 
@@ -224,6 +237,9 @@ namespace MonoGameVerlet.Verlet
                     (int)verletComponent.Radius * 2, 
                     (int)verletComponent.Radius * 2), 
                     verletComponent.Color);
+
+                //spriteBatch.Draw(bloom, verletComponent.PositionCurrent, verletComponent.Color);
+
                 spriteBatch.End();
             }
 
