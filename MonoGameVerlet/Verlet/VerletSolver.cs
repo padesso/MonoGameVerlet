@@ -13,6 +13,8 @@ namespace MonoGameVerlet.Verlet
     /// </summary>
     public class VerletSolver : DrawableGameComponent
     {
+        private Texture2D circleTexture;
+
         private SpriteBatch spriteBatch;
         public Vector2 Gravity = new Vector2(0f, 5000f);
 
@@ -28,6 +30,8 @@ namespace MonoGameVerlet.Verlet
         public bool UseQuadTree = true;
         public bool DrawQuadTree = false;
 
+        Random random;
+
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
@@ -37,10 +41,15 @@ namespace MonoGameVerlet.Verlet
             this.constraintPosition = constraintPosition;
             this.constraintRadius = constraintRadius;
             this.SubSteps = subSteps;
+
+            circleTexture = Game.Content.Load<Texture2D>("Circle");
+            random = new Random();
         }
 
         public override void Initialize()
         {
+            
+
             base.Initialize();
         }
 
@@ -182,7 +191,13 @@ namespace MonoGameVerlet.Verlet
             foreach (var verletComponent in verletComponents)
             {
                 spriteBatch.Begin();
-                ShapeExtensions.DrawCircle(spriteBatch, verletComponent.PositionCurrent, verletComponent.Radius, 36, Color.White);
+
+                spriteBatch.Draw(circleTexture, 
+                    new Rectangle((int)verletComponent.PositionCurrent.X, 
+                    (int)verletComponent.PositionCurrent.Y, 
+                    (int)verletComponent.Radius * 2, 
+                    (int)verletComponent.Radius * 2), 
+                    verletComponent.Color);
                 spriteBatch.End();
             }
 

@@ -19,6 +19,7 @@ namespace MonoGameVerlet.Verlet
         private Vector2 acceleration = Vector2.Zero;
         
         public Rectangle Bounds;
+        public Color Color;
 
         public bool IsStatic;
 
@@ -28,7 +29,9 @@ namespace MonoGameVerlet.Verlet
             PositionCurrent = initialPosition;
             Radius = radius;
             Bounds = new Rectangle((int)initialPosition.X, (int)initialPosition.Y, (int)(radius * 2), (int)(radius * 2));
-            IsStatic = isStatic;    
+            IsStatic = isStatic;
+            Random random = new Random();
+            Color = new Color(random.Next(0, 255), random.Next(0, 255), random.Next(0, 255));
         }
 
         public void Update(float dt)
