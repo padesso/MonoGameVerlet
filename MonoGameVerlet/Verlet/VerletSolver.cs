@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using MonoGame.Extended;
 using MonoGameVerlet.DataStructures;
+using MonoGameVerlet.Effects;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,6 +14,8 @@ namespace MonoGameVerlet.Verlet
     /// </summary>
     public class VerletSolver : DrawableGameComponent
     {
+        private BloomFilter bloomFilter;
+
         private Texture2D circleTexture;
 
         private SpriteBatch spriteBatch;
@@ -44,6 +47,13 @@ namespace MonoGameVerlet.Verlet
 
             circleTexture = Game.Content.Load<Texture2D>("Circle");
             random = new Random();
+
+            //Load our Bloomfilter!
+            bloomFilter = new BloomFilter();
+            bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); //TODO: verify width/height ok
+            bloomFilter.BloomPreset = BloomFilter.BloomPresets.Focussed;
+            bloomFilter.BloomStrengthMultiplier = .5f;
+            bloomFilter.BloomThreshold = .5f;
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -205,27 +215,40 @@ namespace MonoGameVerlet.Verlet
 
         public override void Draw(GameTime gameTime)
         {
-            spriteBatch.Begin();
+            spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+
             spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
                 quadTree.Draw(spriteBatch, GraphicsDevice);
             }
 
+            Texture2D bloom = bloomFilter.Draw(circleTexture, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Width / 2);
+            Game.GraphicsDevice.SetRenderTarget(null);
+
+            foreach (var verletComponent in verletComponents)
+            {  
+                spriteBatch.Draw(bloom, new Rectangle((int)(verletComponent.PositionCurrent.X - verletComponent.Radius),
+                    (int)(verletComponent.PositionCurrent.Y - verletComponent.Radius),
+                    (int)verletComponent.Radius * 4,
+                    (int)verletComponent.Radius * 4), 
+                    verletComponent.Color);
+            }
+
             spriteBatch.End();
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             foreach (var verletComponent in verletComponents)
             {
-                spriteBatch.Begin();
-
-                spriteBatch.Draw(circleTexture, 
-                    new Rectangle((int)verletComponent.PositionCurrent.X, 
-                    (int)verletComponent.PositionCurrent.Y, 
-                    (int)verletComponent.Radius * 2, 
-                    (int)verletComponent.Radius * 2), 
-                    verletComponent.Color);
-                spriteBatch.End();
+                spriteBatch.Draw(circleTexture,
+                    new Rectangle((int)verletComponent.PositionCurrent.X,
+                    (int)verletComponent.PositionCurrent.Y,
+                    (int)verletComponent.Radius * 2,
+                    (int)verletComponent.Radius * 2),
+                    verletComponent.Color * .5f);
             }
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

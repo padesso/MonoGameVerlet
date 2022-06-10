@@ -11,6 +11,7 @@ namespace MonoGameVerlet
     public class Game1 : Game
     {
         private readonly MouseListener mouseListener = new MouseListener();
+        private readonly KeyboardListener keyboardListener = new KeyboardListener();
 
         private FrameCounter frameCounter = new FrameCounter();
 
@@ -32,7 +33,7 @@ namespace MonoGameVerlet
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -41,14 +42,39 @@ namespace MonoGameVerlet
         {
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
+            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
 
             GuiRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
+
             mouseListener.MouseDragStart += MouseListener_MouseDragStart;
             mouseListener.MouseDrag += MouseListener_MouseDrag;
             mouseListener.MouseDragEnd += MouseListener_MouseDragEnd;
 
+            keyboardListener.KeyPressed += KeyboardListener_KeyPressed;
+
             base.Initialize();
+        }
+
+        private void KeyboardListener_KeyPressed(object sender, KeyboardEventArgs e)
+        {
+            if(e.Key == Microsoft.Xna.Framework.Input.Keys.Left)
+            {
+                verletSolver.Gravity.X -= 100;
+            }
+            else if(e.Key == Microsoft.Xna.Framework.Input.Keys.Right)
+            {
+                verletSolver.Gravity.X += 100;
+            }
+            else if(e.Key == Microsoft.Xna.Framework.Input.Keys.Up)
+            {
+                verletSolver.Gravity.Y -= 100;
+            }
+            else if(e.Key == Microsoft.Xna.Framework.Input.Keys.Down)
+            {
+                verletSolver.Gravity.Y += 100;
+            }
         }
 
         private void MouseListener_MouseDrag(object sender, MouseEventArgs e)
@@ -86,6 +112,7 @@ namespace MonoGameVerlet
         protected override void Update(GameTime gameTime)
         {
             mouseListener.Update(gameTime);
+            keyboardListener.Update(gameTime);
 
             if (reset)
             {
