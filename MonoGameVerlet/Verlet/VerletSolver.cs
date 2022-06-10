@@ -216,6 +216,7 @@ namespace MonoGameVerlet.Verlet
 
         public override void Draw(GameTime gameTime)
         {
+            //Shader needs this spritebatch setup
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
             spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
@@ -240,6 +241,7 @@ namespace MonoGameVerlet.Verlet
             }
             spriteBatch.End();
             
+            //Change spritebatch so we can do transparency
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             foreach (var verletComponent in verletComponents)
