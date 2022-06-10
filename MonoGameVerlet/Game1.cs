@@ -33,7 +33,7 @@ namespace MonoGameVerlet
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
+            graphics = new GraphicsDeviceManager(this);            
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -42,6 +42,8 @@ namespace MonoGameVerlet
         {
             graphics.PreferredBackBufferWidth = 1920;
             graphics.PreferredBackBufferHeight = 1080;
+            graphics.SynchronizeWithVerticalRetrace = true;
+            graphics.GraphicsProfile = GraphicsProfile.HiDef;
             graphics.ApplyChanges();
 
             GuiRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
