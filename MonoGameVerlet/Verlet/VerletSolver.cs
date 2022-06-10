@@ -19,7 +19,7 @@ namespace MonoGameVerlet.Verlet
         public Vector2 Gravity = new Vector2(0f, 2000f);
 
         private List<VerletComponent> verletComponents;
-        private QuadTree quadTree;
+        public QuadTree QuadTree;
 
         private Vector2 constraintPosition;
         private float constraintRadius;
@@ -36,7 +36,7 @@ namespace MonoGameVerlet.Verlet
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
-            quadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2)));
+            QuadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2)));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -57,7 +57,7 @@ namespace MonoGameVerlet.Verlet
         internal VerletComponent GetVerletComponent(Vector2 position)
         {
             List<VerletComponent> clickedNeighbors = new List<VerletComponent>();
-            quadTree.Retrieve(clickedNeighbors, new Rectangle((int)position.X, (int)position.Y, 1, 1));
+            QuadTree.Retrieve(clickedNeighbors, new Rectangle((int)position.X, (int)position.Y, 1, 1));
 
             VerletComponent closestToClick = null;
             float clickDist = 0;
@@ -90,7 +90,7 @@ namespace MonoGameVerlet.Verlet
         {
             applyGravity();
             applyConstraint();
-            quadTree.Update(verletComponents);
+            QuadTree.Update(verletComponents);
             solveCollisions();
             updatePositions(dt);
         }
@@ -151,7 +151,7 @@ namespace MonoGameVerlet.Verlet
                     if (verletComponent1.IsStatic)
                         continue;
 
-                    quadTree.Retrieve(collisions, verletComponent1.Bounds);
+                    QuadTree.Retrieve(collisions, verletComponent1.Bounds);
 
                     for (int k = 0; k < collisions.Count; k++)
                     {
@@ -217,7 +217,7 @@ namespace MonoGameVerlet.Verlet
             spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
-                quadTree.Draw(spriteBatch, GraphicsDevice);
+                QuadTree.Draw(spriteBatch, GraphicsDevice);
             }
 
             if (UseBloomShader)

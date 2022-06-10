@@ -102,11 +102,7 @@ namespace MonoGameVerlet
 
             verletSolver = new VerletSolver(spriteBatch, new Vector2(960, 540f), 500, this, 5);
 
-            chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
-            verletSolver.AddChain(chain1);
-
-            chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
-            verletSolver.AddChain(chain2);
+            Reset();
         }
 
         protected override void Update(GameTime gameTime)
@@ -116,7 +112,7 @@ namespace MonoGameVerlet
 
             if (reset)
             {
-                verletSolver.Reset();
+                Reset();
                 reset = false;
             }
 
@@ -142,6 +138,17 @@ namespace MonoGameVerlet
             base.Update(gameTime);
         }
 
+        private void Reset()
+        {
+            verletSolver.Reset();
+
+            chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
+            verletSolver.AddChain(chain1);
+
+            chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
+            verletSolver.AddChain(chain2);
+        }
+
         protected override void Draw(GameTime gameTime)
         {
             GraphicsDevice.Clear(Color.Black);
@@ -158,17 +165,35 @@ namespace MonoGameVerlet
             //ImGUI
             GuiRenderer.BeginLayout(gameTime);
 
-            ImGui.Begin("Debug Settings");
+            ImGui.Begin("Settings");
+
             ImGui.SetWindowPos(new System.Numerics.Vector2(10, 10));
-            ImGui.SetWindowSize(new System.Numerics.Vector2(250, 200));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(300, 425));
+
+            ImGui.Text("Debug");
             ImGui.Text(fps);
             ImGui.Text("Object Count: " + verletSolver.NumberVerletComponents);
+            ImGui.NewLine();
+
+            ImGui.Text("Physics");
             ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 1, 10);
             ImGui.SliderFloat("Gravity X", ref verletSolver.Gravity.X, -5000, 5000);
             ImGui.SliderFloat("Gravity Y", ref verletSolver.Gravity.Y, -5000, 5000);
+
+            ImGui.NewLine();
+
+            ImGui.Text("QuadTree");
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
+            ImGui.SliderInt("Max Objects", ref verletSolver.QuadTree.MaxObjects, 1, 1000);
+            ImGui.SliderInt("Max Levels", ref verletSolver.QuadTree.MaxLevels, 1, 1000);
+
+            ImGui.NewLine();
+
+            ImGui.Text("Graphics");
             ImGui.Checkbox("Bloom Shader?", ref verletSolver.UseBloomShader);
+
+            ImGui.NewLine();
             reset = ImGui.Button("Reset");
 
             GuiRenderer.EndLayout();
