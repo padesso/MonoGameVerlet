@@ -16,7 +16,7 @@ namespace MonoGameVerlet.Verlet
         private Texture2D circleTexture;
 
         private SpriteBatch spriteBatch;
-        public Vector2 Gravity = new Vector2(0f, 5000f);
+        public Vector2 Gravity = new Vector2(0f, 2000f);
 
         private List<VerletComponent> verletComponents;
         private QuadTree quadTree;
@@ -51,7 +51,26 @@ namespace MonoGameVerlet.Verlet
             List<VerletComponent> clickedNeighbors = new List<VerletComponent>();
             quadTree.Retrieve(clickedNeighbors, new Rectangle((int)position.X, (int)position.Y, 1, 1));
 
-            return clickedNeighbors[0];
+            VerletComponent closestToClick = null;
+            float clickDist = 0;
+            for(int i = 0; i < clickedNeighbors.Count; i++)
+            {
+                if(i==0)
+                {
+                    closestToClick = clickedNeighbors[i];
+                    clickDist = Vector2.Distance(position, clickedNeighbors[i].PositionCurrent);
+                }
+                else
+                {
+                    if (Vector2.Distance(position, clickedNeighbors[i].PositionCurrent) < clickDist)
+                    {
+                        closestToClick = clickedNeighbors[i];
+                        clickDist = Vector2.Distance(position, clickedNeighbors[i].PositionCurrent);
+                    }
+                }
+            }
+
+            return closestToClick;
         }
 
         public override void Initialize()

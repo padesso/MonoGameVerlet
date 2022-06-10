@@ -92,7 +92,7 @@ namespace MonoGameVerlet
             }
 
             spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 1000)
+            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 500)
             {
                 verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
                 verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
