@@ -46,6 +46,14 @@ namespace MonoGameVerlet.Verlet
             random = new Random();
         }
 
+        internal VerletComponent GetVerletComponent(Vector2 position)
+        {
+            List<VerletComponent> clickedNeighbors = new List<VerletComponent>();
+            quadTree.Retrieve(clickedNeighbors, new Rectangle((int)position.X, (int)position.Y, 1, 1));
+
+            return clickedNeighbors[0];
+        }
+
         public override void Initialize()
         {
             
@@ -118,7 +126,7 @@ namespace MonoGameVerlet.Verlet
                     if (verletComponent1.IsStatic)
                         continue;
 
-                    quadTree.Retrieve(collisions, verletComponent1);
+                    quadTree.Retrieve(collisions, verletComponent1.Bounds);
 
                     for (int k = 0; k < collisions.Count; k++)
                     {
@@ -179,8 +187,7 @@ namespace MonoGameVerlet.Verlet
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
-
+            spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
                 quadTree.Draw(spriteBatch, GraphicsDevice);

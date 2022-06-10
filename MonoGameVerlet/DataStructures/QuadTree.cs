@@ -63,19 +63,19 @@ namespace MonoGameVerlet.DataStructures
 		// object cannot completely fit within a child node and is part
 		// of the parent node
 
-		private int GetIndex(VerletComponent pRect)
+		private int GetIndex(Rectangle pRect) //TODO: update this name to a rect
 		{
 			int index = -1;
 			double verticalMidpoint = bounds.X + (bounds.Width / 2f);
 			double horizontalMidpoint = bounds.Y + (bounds.Height / 2f);
 
 			// Object can completely fit within the top quadrants
-			bool topQuadrant = (pRect.Bounds.Y < horizontalMidpoint && pRect.Bounds.Y + pRect.Bounds.Height < horizontalMidpoint);
+			bool topQuadrant = (pRect.Y < horizontalMidpoint && pRect.Y + pRect.Height < horizontalMidpoint);
 			// Object can completely fit within the bottom quadrants
-			bool bottomQuadrant = (pRect.Bounds.Y > horizontalMidpoint);
+			bool bottomQuadrant = (pRect.Y > horizontalMidpoint);
 
 			// Object can completely fit within the left quadrants
-			if (pRect.Bounds.X < verticalMidpoint && pRect.Bounds.X + pRect.Bounds.Width < verticalMidpoint)
+			if (pRect.X < verticalMidpoint && pRect.X + pRect.Width < verticalMidpoint)
 			{
 				if (topQuadrant)
 				{
@@ -87,7 +87,7 @@ namespace MonoGameVerlet.DataStructures
 				}
 			}
 			// Object can completely fit within the right quadrants
-			else if (pRect.Bounds.X > verticalMidpoint)
+			else if (pRect.X > verticalMidpoint)
 			{
 				if (topQuadrant)
 				{
@@ -102,21 +102,21 @@ namespace MonoGameVerlet.DataStructures
 			return index;
 		}
 
-		public void Insert(VerletComponent pRect)
+		public void Insert(VerletComponent verletComponent)
 		{
 			if (nodes[0] != null)
 			{
-				int index = GetIndex(pRect);
+				int index = GetIndex(verletComponent.Bounds);
 
 				if (index != -1)
 				{
-					nodes[index].Insert(pRect);
+					nodes[index].Insert(verletComponent);
 
 					return;
 				}
 			}
 
-			objects.Add(pRect);
+			objects.Add(verletComponent);
 
 			if (objects.Count > MAX_OBJECTS && level < MAX_LEVELS)
 			{
@@ -128,7 +128,7 @@ namespace MonoGameVerlet.DataStructures
 				int i = 0;
 				while (i < objects.Count)
 				{
-					int index = GetIndex(objects[i]);
+					int index = GetIndex(objects[i].Bounds);
 					if (index != -1)
 					{
 						nodes[index].Insert(objects[i]);
@@ -145,17 +145,17 @@ namespace MonoGameVerlet.DataStructures
 
 		// Return all objects that could collide with the given object (recursive)
 
-		public void Retrieve(List<VerletComponent> returnedObjs, VerletComponent obj)
+		public void Retrieve(List<VerletComponent> returnedVerletComponents, Rectangle rect)
 		{
 			if (nodes[0] != null)
 			{
-				var index = GetIndex(obj);
+				var index = GetIndex(rect);
 				if (index != -1)
 				{
-					nodes[index].Retrieve(returnedObjs, obj);
+					nodes[index].Retrieve(returnedVerletComponents, rect);
 				}
 			}
-			returnedObjs.AddRange(objects);
+			returnedVerletComponents.AddRange(objects);
 		}
 
 		public void Draw(SpriteBatch spriteBatch, GraphicsDevice g)

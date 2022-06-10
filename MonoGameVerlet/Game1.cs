@@ -1,18 +1,17 @@
 ﻿using ImGuiNET;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using MonoGame.Extended;
-using MonoGame.ImGui;
 using MonoGame.ImGui.Standard;
 using MonoGameVerlet.Verlet;
 using System;
-using System.Collections.Generic;
+using MonoGame.Extended.Input.InputListeners;
 
 namespace MonoGameVerlet
 {
     public class Game1 : Game
     {
+        private readonly MouseListener mouseListener = new MouseListener();
+
         private FrameCounter frameCounter = new FrameCounter();
 
         private GraphicsDeviceManager graphics;
@@ -27,6 +26,9 @@ namespace MonoGameVerlet
 
         public ImGUIRenderer GuiRenderer;
         private bool reset = false;
+
+        private VerletComponent selectedVerletComponent;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -41,8 +43,29 @@ namespace MonoGameVerlet
             graphics.ApplyChanges();
 
             GuiRenderer = new ImGUIRenderer(this).Initialize().RebuildFontAtlas();
+            mouseListener.MouseDragStart += MouseListener_MouseDragStart;
+            mouseListener.MouseDrag += MouseListener_MouseDrag;
+            mouseListener.MouseDragEnd += MouseListener_MouseDragEnd;
 
             base.Initialize();
+        }
+
+        private void MouseListener_MouseDrag(object sender, MouseEventArgs e)
+        {
+            selectedVerletComponent.PositionOld = new Vector2(e.Position.X - selectedVerletComponent.Radius, e.Position.Y - selectedVerletComponent.Radius);
+            selectedVerletComponent.PositionCurrent = new Vector2(e.Position.X - selectedVerletComponent.Radius, e.Position.Y - selectedVerletComponent.Radius);
+        }
+
+        private void MouseListener_MouseDragEnd(object sender, MouseEventArgs e)
+        {
+            selectedVerletComponent.IsStatic = false;
+            selectedVerletComponent = null;
+        }
+
+        private void MouseListener_MouseDragStart(object sender, MouseEventArgs e)
+        {
+            selectedVerletComponent = verletSolver.GetVerletComponent(new Vector2(e.Position.X, e.Position.Y));
+            selectedVerletComponent.IsStatic = true;
         }
 
         protected override void LoadContent()
@@ -60,7 +83,9 @@ namespace MonoGameVerlet
 
         protected override void Update(GameTime gameTime)
         {
-            if(reset)
+            mouseListener.Update(gameTime);
+
+            if (reset)
             {
                 verletSolver.Reset();
                 reset = false;
