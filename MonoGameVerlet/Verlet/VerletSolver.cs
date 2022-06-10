@@ -112,7 +112,8 @@ namespace MonoGameVerlet.Verlet
         {
             foreach (var verletComponent in verletComponents)
             {
-                verletComponent.Accelerate(Gravity);
+                if(!verletComponent.IsStatic)
+                    verletComponent.Accelerate(Gravity);
             }
         }
 
