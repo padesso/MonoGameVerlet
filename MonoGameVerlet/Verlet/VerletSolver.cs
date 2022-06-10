@@ -16,7 +16,7 @@ namespace MonoGameVerlet.Verlet
         private Texture2D circleTexture;
 
         private SpriteBatch spriteBatch;
-        public Vector2 Gravity = new Vector2(0f, 5000f);
+        public Vector2 Gravity = new Vector2(0f, 2000f);
 
         private List<VerletComponent> verletComponents;
         private QuadTree quadTree;
@@ -44,6 +44,33 @@ namespace MonoGameVerlet.Verlet
 
             circleTexture = Game.Content.Load<Texture2D>("Circle");
             random = new Random();
+        }
+
+        internal VerletComponent GetVerletComponent(Vector2 position)
+        {
+            List<VerletComponent> clickedNeighbors = new List<VerletComponent>();
+            quadTree.Retrieve(clickedNeighbors, new Rectangle((int)position.X, (int)position.Y, 1, 1));
+
+            VerletComponent closestToClick = null;
+            float clickDist = 0;
+            for(int i = 0; i < clickedNeighbors.Count; i++)
+            {
+                if(i==0)
+                {
+                    closestToClick = clickedNeighbors[i];
+                    clickDist = Vector2.Distance(position, clickedNeighbors[i].PositionCurrent);
+                }
+                else
+                {
+                    if (Vector2.Distance(position, clickedNeighbors[i].PositionCurrent) < clickDist)
+                    {
+                        closestToClick = clickedNeighbors[i];
+                        clickDist = Vector2.Distance(position, clickedNeighbors[i].PositionCurrent);
+                    }
+                }
+            }
+
+            return closestToClick;
         }
 
         public override void Initialize()
@@ -118,7 +145,7 @@ namespace MonoGameVerlet.Verlet
                     if (verletComponent1.IsStatic)
                         continue;
 
-                    quadTree.Retrieve(collisions, verletComponent1);
+                    quadTree.Retrieve(collisions, verletComponent1.Bounds);
 
                     for (int k = 0; k < collisions.Count; k++)
                     {
@@ -179,8 +206,7 @@ namespace MonoGameVerlet.Verlet
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            ShapeExtensions.DrawCircle(spriteBatch, constraintPosition, constraintRadius, 100, Color.White);
-
+            spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
                 quadTree.Draw(spriteBatch, GraphicsDevice);
