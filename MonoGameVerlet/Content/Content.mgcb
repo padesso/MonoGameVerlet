@@ -32,3 +32,9 @@
 /processorParam:TextureFormat=Compressed
 /build:File.spritefont;Debug.spritefont
 
+#begin Shaders/BloomFilter/BloomCrossPlatform.fx
+/importer:EffectImporter
+/processor:EffectProcessor
+/processorParam:DebugMode=Auto
+/build:Shaders/BloomFilter/BloomCrossPlatform.fx
+
