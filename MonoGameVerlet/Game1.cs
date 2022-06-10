@@ -28,6 +28,7 @@ namespace MonoGameVerlet
         private bool reset = false;
 
         private VerletComponent selectedVerletComponent;
+        private bool clickedComponentStatic = false;
 
         public Game1()
         {
@@ -58,14 +59,15 @@ namespace MonoGameVerlet
 
         private void MouseListener_MouseDragEnd(object sender, MouseEventArgs e)
         {
-            selectedVerletComponent.IsStatic = false;
+            selectedVerletComponent.IsStatic = clickedComponentStatic;
             selectedVerletComponent = null;
         }
 
         private void MouseListener_MouseDragStart(object sender, MouseEventArgs e)
         {
             selectedVerletComponent = verletSolver.GetVerletComponent(new Vector2(e.Position.X, e.Position.Y));
-            selectedVerletComponent.IsStatic = true;
+            clickedComponentStatic = selectedVerletComponent.IsStatic; //store the state
+            selectedVerletComponent.IsStatic = true; //make it static so it's not affected by physics during drag
         }
 
         protected override void LoadContent()
