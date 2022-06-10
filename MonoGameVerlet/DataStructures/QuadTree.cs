@@ -8,8 +8,6 @@ using System.Text;
 
 namespace MonoGameVerlet.DataStructures
 {
-	//https://github.com/SoDamnMetal/Spatial-Partition/tree/main/QuadTrees
-
 	public class QuadTree
 	{
 		private readonly int MAX_OBJECTS = 50;

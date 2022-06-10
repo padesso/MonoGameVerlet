@@ -9,9 +9,6 @@ using System.Text;
 
 namespace MonoGameVerlet.Verlet
 {
-    /// <summary>
-    /// Port of Verlet simulation: https://www.youtube.com/watch?v=lS_qeBy3aQI&t=72
-    /// </summary>
     public class VerletSolver : DrawableGameComponent
     {
         private BloomFilter bloomFilter;
