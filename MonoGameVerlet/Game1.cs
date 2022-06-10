@@ -168,6 +168,7 @@ namespace MonoGameVerlet
             ImGui.SliderFloat("Gravity Y", ref verletSolver.Gravity.Y, -5000, 5000);
             ImGui.Checkbox("Use QuadTree?", ref verletSolver.UseQuadTree);
             ImGui.Checkbox("Draw QuadTree?", ref verletSolver.DrawQuadTree);
+            ImGui.Checkbox("Bloom Shader?", ref verletSolver.UseBloomShader);
             reset = ImGui.Button("Reset");
 
             GuiRenderer.EndLayout();

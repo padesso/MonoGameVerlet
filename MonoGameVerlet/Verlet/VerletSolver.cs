@@ -34,6 +34,7 @@ namespace MonoGameVerlet.Verlet
         public bool DrawQuadTree = false;
 
         Random random;
+        public bool UseBloomShader = true;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
@@ -53,7 +54,7 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); //TODO: verify width/height ok
             bloomFilter.BloomPreset = BloomFilter.BloomPresets.Focussed;
             bloomFilter.BloomStrengthMultiplier = .5f;
-            bloomFilter.BloomThreshold = .5f;
+            bloomFilter.BloomThreshold = .8f;
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -223,19 +224,22 @@ namespace MonoGameVerlet.Verlet
                 quadTree.Draw(spriteBatch, GraphicsDevice);
             }
 
-            Texture2D bloom = bloomFilter.Draw(circleTexture, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Width / 2);
-            Game.GraphicsDevice.SetRenderTarget(null);
+            if (UseBloomShader)
+            {
+                Texture2D bloom = bloomFilter.Draw(circleTexture, GraphicsDevice.Viewport.Width / 2, GraphicsDevice.Viewport.Width / 2);
+                Game.GraphicsDevice.SetRenderTarget(null);
 
-            foreach (var verletComponent in verletComponents)
-            {  
-                spriteBatch.Draw(bloom, new Rectangle((int)(verletComponent.PositionCurrent.X - verletComponent.Radius),
-                    (int)(verletComponent.PositionCurrent.Y - verletComponent.Radius),
-                    (int)verletComponent.Radius * 4,
-                    (int)verletComponent.Radius * 4), 
-                    verletComponent.Color);
+                foreach (var verletComponent in verletComponents)
+                {
+                    spriteBatch.Draw(bloom, new Rectangle((int)(verletComponent.PositionCurrent.X - verletComponent.Radius),
+                        (int)(verletComponent.PositionCurrent.Y - verletComponent.Radius),
+                        (int)verletComponent.Radius * 4,
+                        (int)verletComponent.Radius * 4),
+                        verletComponent.Color * .85f);
+                }
             }
-
             spriteBatch.End();
+            
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
             foreach (var verletComponent in verletComponents)
