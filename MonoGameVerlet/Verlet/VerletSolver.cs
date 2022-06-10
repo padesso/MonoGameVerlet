@@ -51,7 +51,7 @@ namespace MonoGameVerlet.Verlet
 
             //Load our Bloomfilter!
             bloomFilter = new BloomFilter();
-            bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height); //TODO: verify width/height ok
+            bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             bloomFilter.BloomPreset = BloomFilter.BloomPresets.Focussed;
             bloomFilter.BloomStrengthMultiplier = .5f;
             bloomFilter.BloomThreshold = .8f;
@@ -86,8 +86,6 @@ namespace MonoGameVerlet.Verlet
 
         public override void Initialize()
         {
-            
-
             base.Initialize();
         }
 
