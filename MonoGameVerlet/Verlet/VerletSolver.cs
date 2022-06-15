@@ -33,6 +33,8 @@ namespace MonoGameVerlet.Verlet
         Random random;
         public bool UseBloomShader = true;
 
+        private Rectangle heatSource;
+
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
@@ -51,7 +53,9 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             bloomFilter.BloomPreset = BloomFilter.BloomPresets.Focussed;
             bloomFilter.BloomStrengthMultiplier = .5f;
-            bloomFilter.BloomThreshold = .8f;
+            bloomFilter.BloomThreshold = .8f;  
+            
+            heatSource = new Rectangle(0, 900, 1920, 180); //TODO: align with quadtree bounds
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -81,6 +85,22 @@ namespace MonoGameVerlet.Verlet
             return closestToClick;
         }
 
+        internal List<VerletComponent> GetVerletComponents(Vector2 position, Vector2 size)
+        {
+            List<VerletComponent> components = new List<VerletComponent>();
+            QuadTree.Retrieve(components, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y));
+
+            return components;
+        }
+
+        internal List<VerletComponent> GetVerletComponents(Rectangle rect)
+        {
+            List<VerletComponent> components = new List<VerletComponent>();
+            QuadTree.Retrieve(components, rect);
+
+            return components;
+        }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -88,6 +108,7 @@ namespace MonoGameVerlet.Verlet
 
         public void Update(float dt)
         {
+            applyHeat();
             applyGravity();
             applyConstraint();
             QuadTree.Update(verletComponents);
@@ -133,6 +154,16 @@ namespace MonoGameVerlet.Verlet
                     n = Vector2.Divide(toComponent, dist);                    
                     verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
                 }
+            }
+        }
+
+        private void applyHeat()
+        {
+            List<VerletComponent> componentsToHeat = GetVerletComponents(heatSource);
+
+            foreach(VerletComponent component in componentsToHeat)
+            {
+                component.Temperature += 20;
             }
         }
 
@@ -215,6 +246,7 @@ namespace MonoGameVerlet.Verlet
             //Shader needs this spritebatch setup
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
 
+            
             spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
@@ -240,6 +272,9 @@ namespace MonoGameVerlet.Verlet
             //Change spritebatch so we can do transparency
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
+            //Heatsource
+            ShapeExtensions.DrawRectangle(spriteBatch, heatSource, Color.Red);
+
             foreach (var verletComponent in verletComponents)
             {
                 spriteBatch.Draw(circleTexture,
@@ -247,7 +282,7 @@ namespace MonoGameVerlet.Verlet
                     (int)verletComponent.PositionCurrent.Y,
                     (int)verletComponent.Radius * 2,
                     (int)verletComponent.Radius * 2),
-                    verletComponent.Color * .5f);
+                    verletComponent.Color);
             }
 
             spriteBatch.End();
@@ -255,9 +290,9 @@ namespace MonoGameVerlet.Verlet
             base.Draw(gameTime);
         }
 
-        public void AddVerletComponent(Vector2 position, float radius, bool isStatic = false)
+        public void AddVerletComponent(Vector2 position, float radius, bool isStatic = false, int temperature = 0)
         {
-            verletComponents.Add(new VerletComponent(position, radius, isStatic));
+            verletComponents.Add(new VerletComponent(position, radius, isStatic, temperature));
         }
 
         public void AddChain(ChainComponent chain)
@@ -266,6 +301,6 @@ namespace MonoGameVerlet.Verlet
             {
                 verletComponents.Add(link);
             }
-        }
+        }  
     }
 }

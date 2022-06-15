@@ -20,15 +20,23 @@ namespace MonoGameVerlet.Verlet
 
         public bool IsStatic;
 
-        public VerletComponent(Vector2 initialPosition, float radius = 15f, bool isStatic = false)
+        public int Temperature;
+        private const int MAX_TEMPERATURE = 100;
+        private const int MIN_TEMPERATURE = 0;
+        private Vector2 tempVelcityModifier = new Vector2(0, -2000);
+
+        public VerletComponent(Vector2 initialPosition, float radius = 15f, bool isStatic = false, int initialTemperature = 0)
         {
             PositionOld = initialPosition;
             PositionCurrent = initialPosition;
             Radius = radius;
             Bounds = new Rectangle((int)initialPosition.X, (int)initialPosition.Y, (int)(radius * 2), (int)(radius * 2));
             IsStatic = isStatic;
+            Temperature = initialTemperature;
+
+            //TODO: color by applied temperature
             Random random = new Random();
-            Color = new Color(random.Next(0, 255), random.Next(0, 255), random.Next(0, 255));
+            Color = ApplyTemperatureColor();
         }
 
         public void Update(float dt)
@@ -48,11 +56,44 @@ namespace MonoGameVerlet.Verlet
             }
 
             Bounds = new Rectangle((int)PositionCurrent.X, (int)PositionCurrent.Y, (int)(Radius * 2), (int)(Radius * 2));
+            Color = ApplyTemperatureColor();
         }
 
         public void Accelerate(Vector2 acc)
         {
             acceleration += acc;
+        }
+
+        private Color ApplyTemperatureColor()
+        {
+            //TODO: scale these values via maths
+
+            if(Temperature <= MIN_TEMPERATURE)
+            {
+                return Color.Black;
+            }
+            else if(Temperature > 0 && Temperature <= 20)
+            {
+                return Color.Red;
+            }
+            else if (Temperature > 20 && Temperature <= 40)
+            {
+                return Color.Orange;
+            }
+            else if (Temperature > 40 && Temperature <= 60)
+            {
+                return Color.Yellow;
+            }
+            else if (Temperature > 60 && Temperature <= 80)
+            {
+                return Color.Blue;
+            }
+            else if (Temperature > 80 && Temperature <= MAX_TEMPERATURE)
+            {
+                return Color.White;
+            }
+
+            return Color.CornflowerBlue; //We should never get here!
         }
     }
 }
