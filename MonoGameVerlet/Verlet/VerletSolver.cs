@@ -200,6 +200,20 @@ namespace MonoGameVerlet.Verlet
                             {
                                 verletComponent2.PositionCurrent -= 0.5f * delta * n;
                             }
+
+                            //Temp advection
+                            var tempDelta = verletComponent1.Temperature - verletComponent2.Temperature;
+
+                            if (tempDelta > 0)
+                            {
+                                verletComponent1.ApplyTemperature(-1);
+                                verletComponent2.ApplyTemperature(1);
+                            }
+                            else if (tempDelta < 0)
+                            {
+                                verletComponent1.ApplyTemperature(1);
+                                verletComponent2.ApplyTemperature(-1);
+                            }
                         }
                     }
                 }
@@ -229,6 +243,20 @@ namespace MonoGameVerlet.Verlet
                             float delta = minDist - dist;
                             verletComponent1.PositionCurrent += 0.5f * delta * n;
                             verletComponent2.PositionCurrent -= 0.5f * delta * n;
+
+                            //Temp advection
+                            var tempDelta = verletComponent1.Temperature - verletComponent2.Temperature;
+
+                            if(tempDelta < 0)
+                            {
+                                verletComponent1.ApplyTemperature(-1);
+                                verletComponent2.ApplyTemperature(1);
+                            }
+                            else if(tempDelta > 0)
+                            {
+                                verletComponent1.ApplyTemperature(1);
+                                verletComponent2.ApplyTemperature(-1);
+                            }
                         }
                     }
                 }
