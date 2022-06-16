@@ -55,7 +55,7 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.BloomStrengthMultiplier = .5f;
             bloomFilter.BloomThreshold = .8f;  
             
-            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 950, (int)(constraintRadius * 2), 100); 
+            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 900, (int)(constraintRadius * 2), 150); 
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -100,10 +100,11 @@ namespace MonoGameVerlet.Verlet
 
         public void Update(float dt)
         {
-            applyHeat();
+            
             applyGravity();
             applyConstraint();
             QuadTree.Update(verletComponents);
+            applyHeat();
             solveCollisions();
             updatePositions(dt);
         }
@@ -156,7 +157,7 @@ namespace MonoGameVerlet.Verlet
                 //TODO: handle multiple heat sources
                 if (heatSource.Contains(verletComponent.PositionCurrent))
                 {
-                    verletComponent.ApplyTemperature(1);
+                    verletComponent.ApplyTemperature(.75f);
                 }
             }
         }
@@ -206,13 +207,13 @@ namespace MonoGameVerlet.Verlet
 
                             if (tempDelta > 0)
                             {
-                                verletComponent1.ApplyTemperature(-1);
-                                verletComponent2.ApplyTemperature(1);
+                                verletComponent1.ApplyTemperature(-.01f);
+                                verletComponent2.ApplyTemperature(.01f);
                             }
                             else if (tempDelta < 0)
                             {
-                                verletComponent1.ApplyTemperature(1);
-                                verletComponent2.ApplyTemperature(-1);
+                                verletComponent1.ApplyTemperature(.01f);
+                                verletComponent2.ApplyTemperature(-.01f);
                             }
                         }
                     }
@@ -247,15 +248,15 @@ namespace MonoGameVerlet.Verlet
                             //Temp advection
                             var tempDelta = verletComponent1.Temperature - verletComponent2.Temperature;
 
-                            if(tempDelta < 0)
+                            if (tempDelta > 0)
                             {
-                                verletComponent1.ApplyTemperature(-1);
-                                verletComponent2.ApplyTemperature(1);
+                                verletComponent1.ApplyTemperature(-.01f);
+                                verletComponent2.ApplyTemperature(.01f);
                             }
-                            else if(tempDelta > 0)
+                            else if (tempDelta < 0)
                             {
-                                verletComponent1.ApplyTemperature(1);
-                                verletComponent2.ApplyTemperature(-1);
+                                verletComponent1.ApplyTemperature(.01f);
+                                verletComponent2.ApplyTemperature(-.01f);
                             }
                         }
                     }

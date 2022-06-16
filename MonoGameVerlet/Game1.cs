@@ -22,8 +22,8 @@ namespace MonoGameVerlet
         private double spawnDelay = 125; //ms
         private double spawnTime = 0;
 
-        private ChainComponent chain1;
-        private ChainComponent chain2;
+        //private ChainComponent chain1;
+        //private ChainComponent chain2;
 
         public ImGUIRenderer GuiRenderer;
         private bool reset = false;
@@ -131,8 +131,8 @@ namespace MonoGameVerlet
             for (int subStep = verletSolver.SubSteps; subStep > 0; subStep--)
             {
                 verletSolver.Update(subDt);
-                chain1.Update(subDt);
-                chain2.Update(subDt);
+                //chain1.Update(subDt);
+                //chain2.Update(subDt);
             }
 
             base.Update(gameTime);
@@ -142,11 +142,11 @@ namespace MonoGameVerlet
         {
             verletSolver.Reset();
 
-            chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
-            verletSolver.AddChain(chain1);
+            //chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
+            //verletSolver.AddChain(chain1);
 
-            chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
-            verletSolver.AddChain(chain2);
+            //chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
+            //verletSolver.AddChain(chain2);
         }
 
         protected override void Draw(GameTime gameTime)

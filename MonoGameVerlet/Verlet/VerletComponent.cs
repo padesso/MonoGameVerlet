@@ -20,9 +20,9 @@ namespace MonoGameVerlet.Verlet
 
         public bool IsStatic;
 
-        public int Temperature;
-        private const int MAX_TEMPERATURE = 100;
-        private const int MIN_TEMPERATURE = 0;
+        public float Temperature;
+        private const float MAX_TEMPERATURE = 1f;
+        private const float MIN_TEMPERATURE = 0f;
         private Vector2 tempVelcityModifier = new Vector2(0, -2000);
 
         public VerletComponent(Vector2 initialPosition, float radius = 15f, bool isStatic = false, int initialTemperature = 0)
@@ -55,14 +55,17 @@ namespace MonoGameVerlet.Verlet
                 acceleration = Vector2.Zero;
             }
 
+            //Decay the temp
+            ApplyTemperature(-.001f);
+
             Bounds = new Rectangle((int)PositionCurrent.X, (int)PositionCurrent.Y, (int)(Radius * 2), (int)(Radius * 2));
             Color = ApplyTemperatureColor();
         }
 
         public void Accelerate(Vector2 acc)
         {
-            var accY = Temperature / MAX_TEMPERATURE;
-            acc.Y += -accY * 2000; //TODO: apply to a acc factor or perhaps move this up to solver to have access to gravity value
+            float accY = Temperature / MAX_TEMPERATURE;
+            acc.Y += -accY * 5000; //TODO: apply to a acc factor or perhaps move this up to solver to have access to gravity value
             acceleration += acc;
         }
 
@@ -72,25 +75,25 @@ namespace MonoGameVerlet.Verlet
 
             if(Temperature <= MIN_TEMPERATURE)
             {
-                return new Color(.1f, 0f, 0f);
+                return new Color(.3f, 0f, 0f);
             }
-            else if(Temperature > 0 && Temperature <= 20)
+            else if(Temperature > MIN_TEMPERATURE && Temperature <= .2 * MAX_TEMPERATURE)
             {
                 return Color.DarkRed;
             }
-            else if (Temperature > 20 && Temperature <= 40)
+            else if (Temperature > .2 * MAX_TEMPERATURE && Temperature <= .4 * MAX_TEMPERATURE)
             {
                 return Color.Red;
             }
-            else if (Temperature > 40 && Temperature <= 60)
+            else if (Temperature > .4 * MAX_TEMPERATURE && Temperature <= .6 * MAX_TEMPERATURE)
             {
                 return Color.Orange;
             }
-            else if (Temperature > 60 && Temperature <= 80)
+            else if (Temperature > .6 * MAX_TEMPERATURE && Temperature <= .8 * MAX_TEMPERATURE)
             {
                 return Color.Yellow;
             }
-            else if (Temperature > 80 && Temperature <= MAX_TEMPERATURE)
+            else if (Temperature > .8 * MAX_TEMPERATURE && Temperature <= MAX_TEMPERATURE)
             {
                 return Color.White;
             }
@@ -102,17 +105,21 @@ namespace MonoGameVerlet.Verlet
             return Color.Green; //We should never get here!
         }
 
-        public void ApplyTemperature(int tempChange)
+        public void ApplyTemperature(float tempChange)
         {
-            Temperature += tempChange;
+            
 
-            if(Temperature < MIN_TEMPERATURE)
+            if(Temperature + tempChange < MIN_TEMPERATURE)
             {
                 Temperature = MIN_TEMPERATURE;
             }
-            else if(Temperature > MAX_TEMPERATURE)
+            else if(Temperature + tempChange > MAX_TEMPERATURE)
             {
                 Temperature = MAX_TEMPERATURE;
+            }
+            else
+            {
+                Temperature += tempChange;
             }
         }
     }
