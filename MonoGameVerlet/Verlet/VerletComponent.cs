@@ -61,6 +61,8 @@ namespace MonoGameVerlet.Verlet
 
         public void Accelerate(Vector2 acc)
         {
+            var accY = Temperature / MAX_TEMPERATURE;
+            acc.Y += -accY * 2000; //TODO: apply to a acc factor or perhaps move this up to solver to have access to gravity value
             acceleration += acc;
         }
 
