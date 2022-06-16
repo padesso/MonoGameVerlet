@@ -55,7 +55,7 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.BloomStrengthMultiplier = .5f;
             bloomFilter.BloomThreshold = .8f;  
             
-            heatSource = new Rectangle(0, 900, 1920, 180); //TODO: align with quadtree bounds
+            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 950, (int)(constraintRadius * 2), 100); 
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -89,14 +89,6 @@ namespace MonoGameVerlet.Verlet
         {
             List<VerletComponent> components = new List<VerletComponent>();
             QuadTree.Retrieve(components, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y));
-
-            return components;
-        }
-
-        internal List<VerletComponent> GetVerletComponents(Rectangle rect)
-        {
-            List<VerletComponent> components = new List<VerletComponent>();
-            QuadTree.Retrieve(components, rect);
 
             return components;
         }
@@ -159,11 +151,13 @@ namespace MonoGameVerlet.Verlet
 
         private void applyHeat()
         {
-            List<VerletComponent> componentsToHeat = GetVerletComponents(heatSource);
-
-            foreach(VerletComponent component in componentsToHeat)
+            foreach (var verletComponent in verletComponents)
             {
-                component.Temperature += 20;
+                //TODO: handle multiple heat sources
+                if (heatSource.Contains(verletComponent.PositionCurrent))
+                {
+                    verletComponent.Temperature += 1;
+                }
             }
         }
 

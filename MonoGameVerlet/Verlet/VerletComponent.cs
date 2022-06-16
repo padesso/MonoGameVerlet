@@ -74,26 +74,44 @@ namespace MonoGameVerlet.Verlet
             }
             else if(Temperature > 0 && Temperature <= 20)
             {
-                return Color.Red;
+                return Color.DarkRed;
             }
             else if (Temperature > 20 && Temperature <= 40)
             {
-                return Color.Orange;
+                return Color.Red;
             }
             else if (Temperature > 40 && Temperature <= 60)
             {
-                return Color.Yellow;
+                return Color.Orange;
             }
             else if (Temperature > 60 && Temperature <= 80)
             {
-                return Color.Blue;
+                return Color.Yellow;
             }
             else if (Temperature > 80 && Temperature <= MAX_TEMPERATURE)
             {
                 return Color.White;
             }
+            else if (Temperature > MAX_TEMPERATURE)
+            {
+                return Color.CornflowerBlue;
+            }
 
-            return Color.CornflowerBlue; //We should never get here!
+            return Color.Green; //We should never get here!
+        }
+
+        public void ApplyTemperature(int tempChange)
+        {
+            Temperature += tempChange;
+
+            if(Temperature < MIN_TEMPERATURE)
+            {
+                Temperature = MIN_TEMPERATURE;
+            }
+            else if(Temperature > MAX_TEMPERATURE)
+            {
+                Temperature = MAX_TEMPERATURE;
+            }
         }
     }
 }
