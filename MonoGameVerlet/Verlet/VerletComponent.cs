@@ -70,7 +70,7 @@ namespace MonoGameVerlet.Verlet
 
             if(Temperature <= MIN_TEMPERATURE)
             {
-                return Color.Black;
+                return new Color(.1f, 0f, 0f);
             }
             else if(Temperature > 0 && Temperature <= 20)
             {

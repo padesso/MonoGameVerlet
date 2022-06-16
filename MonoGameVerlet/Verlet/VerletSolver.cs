@@ -156,7 +156,7 @@ namespace MonoGameVerlet.Verlet
                 //TODO: handle multiple heat sources
                 if (heatSource.Contains(verletComponent.PositionCurrent))
                 {
-                    verletComponent.Temperature += 1;
+                    verletComponent.ApplyTemperature(1);
                 }
             }
         }
