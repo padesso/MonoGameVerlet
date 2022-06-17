@@ -36,7 +36,7 @@ namespace MonoGameVerlet.Verlet
 
         private Rectangle heatSource;
         public bool HeatEnabled = false;
-        public float HeatAmount = .06f;
+        public float HeatAmount = .011f;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
@@ -59,7 +59,7 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.BloomStrengthMultiplier = .5f;
             bloomFilter.BloomThreshold = .8f;  
             
-            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 1000, (int)(constraintRadius * 2), 50); 
+            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 1025, (int)(constraintRadius * 2), 50); 
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -140,8 +140,8 @@ namespace MonoGameVerlet.Verlet
 
         private void applyConstraint()
         {
-            Vector2 toComponent;
-            Vector2 n;
+            //Vector2 toComponent;
+            //Vector2 n;
 
             //Circle
             //foreach (var verletComponent in verletComponents)
