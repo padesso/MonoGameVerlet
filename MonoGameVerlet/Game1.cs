@@ -117,16 +117,16 @@ namespace MonoGameVerlet
                 reset = false;
             }
 
-            spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 1200)
-            {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 1 + 3));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 1 + 3));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 1 + 3));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 1 + 3));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 1 + 3));
-                spawnTime = 0;
-            }
+            //spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            //if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 1200)
+            //{
+            //    verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    spawnTime = 0;
+            //}
 
             float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / verletSolver.SubSteps);
             for (int subStep = verletSolver.SubSteps; subStep > 0; subStep--)
@@ -142,6 +142,15 @@ namespace MonoGameVerlet
         private void Reset()
         {
             verletSolver.Reset();
+
+            //new Vector2(960, 540f), 500
+            for (int i = 0; i < 300; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    verletSolver.AddVerletComponent(new Vector2(960 + i * 5, 500 + j * 5), 3);
+                }
+            }
 
             //chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
             //verletSolver.AddChain(chain1);
