@@ -23,7 +23,8 @@ namespace MonoGameVerlet.Verlet
 
         private Vector2 constraintPosition;
         private float constraintRadius;
-        
+        private Rectangle rectangleConstraint;
+
         public int NumberVerletComponents { get => verletComponents.Count; }
         public int SubSteps;
 
@@ -41,6 +42,7 @@ namespace MonoGameVerlet.Verlet
         {
             verletComponents = new List<VerletComponent>();
             QuadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2)));
+            rectangleConstraint = new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -141,16 +143,41 @@ namespace MonoGameVerlet.Verlet
             Vector2 toComponent;
             Vector2 n;
 
+            //Circle
+            //foreach (var verletComponent in verletComponents)
+            //{
+            //    toComponent.X = verletComponent.PositionCurrent.X - constraintPosition.X;
+            //    toComponent.Y = verletComponent.PositionCurrent.Y - constraintPosition.Y;
+            //    float dist = toComponent.Length();
+
+            //    if(dist > constraintRadius - verletComponent.Radius)
+            //    {
+            //        n = Vector2.Divide(toComponent, dist);                    
+            //        verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
+            //    }
+            //}
+
+            //Rectangle
             foreach (var verletComponent in verletComponents)
             {
-                toComponent.X = verletComponent.PositionCurrent.X - constraintPosition.X;
-                toComponent.Y = verletComponent.PositionCurrent.Y - constraintPosition.Y;
-                float dist = toComponent.Length();
-
-                if(dist > constraintRadius - verletComponent.Radius)
+                if(verletComponent.PositionCurrent.X <= rectangleConstraint.X)
                 {
-                    n = Vector2.Divide(toComponent, dist);                    
-                    verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
+                    verletComponent.PositionCurrent.X = rectangleConstraint.X;
+                }
+
+                if (verletComponent.PositionCurrent.X >= rectangleConstraint.X + rectangleConstraint.Width)
+                {
+                    verletComponent.PositionCurrent.X = rectangleConstraint.X + rectangleConstraint.Width;
+                }
+
+                if (verletComponent.PositionCurrent.Y <= rectangleConstraint.Y)
+                {
+                    verletComponent.PositionCurrent.Y = rectangleConstraint.Y;
+                }
+
+                if (verletComponent.PositionCurrent.Y >= rectangleConstraint.Y + rectangleConstraint.Height)
+                {
+                    verletComponent.PositionCurrent.Y = rectangleConstraint.Y + rectangleConstraint.Height;
                 }
             }
         }
@@ -273,9 +300,10 @@ namespace MonoGameVerlet.Verlet
         {
             //Shader needs this spritebatch setup
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+                        
+            //spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
+            spriteBatch.DrawRectangle(rectangleConstraint, Color.White);
 
-            
-            spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
                 QuadTree.Draw(spriteBatch, GraphicsDevice);
