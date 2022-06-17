@@ -34,6 +34,8 @@ namespace MonoGameVerlet.Verlet
         public bool UseBloomShader = true;
 
         private Rectangle heatSource;
+        public bool HeatEnabled = false;
+        public float HeatAmount = .1f;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
@@ -55,7 +57,7 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.BloomStrengthMultiplier = .5f;
             bloomFilter.BloomThreshold = .8f;  
             
-            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 900, (int)(constraintRadius * 2), 150); 
+            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 1000, (int)(constraintRadius * 2), 50); 
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -104,7 +106,10 @@ namespace MonoGameVerlet.Verlet
             applyGravity();
             applyConstraint();
             QuadTree.Update(verletComponents);
-            applyHeat();
+            if (HeatEnabled)
+            {
+                applyHeat();
+            }
             solveCollisions();
             updatePositions(dt);
         }
@@ -157,7 +162,7 @@ namespace MonoGameVerlet.Verlet
                 //TODO: handle multiple heat sources
                 if (heatSource.Contains(verletComponent.PositionCurrent))
                 {
-                    verletComponent.ApplyTemperature(.75f);
+                    verletComponent.ApplyTemperature(HeatAmount);
                 }
             }
         }
@@ -298,15 +303,15 @@ namespace MonoGameVerlet.Verlet
             //Heatsource
             ShapeExtensions.DrawRectangle(spriteBatch, heatSource, Color.Red);
 
-            foreach (var verletComponent in verletComponents)
-            {
-                spriteBatch.Draw(circleTexture,
-                    new Rectangle((int)verletComponent.PositionCurrent.X,
-                    (int)verletComponent.PositionCurrent.Y,
-                    (int)verletComponent.Radius * 2,
-                    (int)verletComponent.Radius * 2),
-                    verletComponent.Color);
-            }
+            //foreach (var verletComponent in verletComponents)
+            //{
+            //    spriteBatch.Draw(circleTexture,
+            //        new Rectangle((int)verletComponent.PositionCurrent.X,
+            //        (int)verletComponent.PositionCurrent.Y,
+            //        (int)verletComponent.Radius * 2,
+            //        (int)verletComponent.Radius * 2),
+            //        verletComponent.Color);
+            //}
 
             spriteBatch.End();
 
