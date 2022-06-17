@@ -35,7 +35,7 @@ namespace MonoGameVerlet.Verlet
 
         private Rectangle heatSource;
         public bool HeatEnabled = false;
-        public float HeatAmount = .1f;
+        public float HeatAmount = .06f;
 
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
