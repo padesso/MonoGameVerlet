@@ -23,7 +23,8 @@ namespace MonoGameVerlet.Verlet
 
         private Vector2 constraintPosition;
         private float constraintRadius;
-        
+        private Rectangle rectangleConstraint;
+
         public int NumberVerletComponents { get => verletComponents.Count; }
         public int SubSteps;
 
@@ -33,10 +34,15 @@ namespace MonoGameVerlet.Verlet
         Random random;
         public bool UseBloomShader = true;
 
+        private Rectangle heatSource;
+        public bool HeatEnabled = false;
+        public float HeatAmount = .011f;
+
         public VerletSolver(SpriteBatch spriteBatch, Vector2 constraintPosition, float constraintRadius, Game game, int subSteps = 3) : base(game)
         {
             verletComponents = new List<VerletComponent>();
             QuadTree = new QuadTree(0, new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2)));
+            rectangleConstraint = new Rectangle((int)(constraintPosition.X - constraintRadius), (int)(constraintPosition.Y - constraintRadius), (int)(constraintRadius * 2), (int)(constraintRadius * 2));
 
             this.spriteBatch = spriteBatch;
             this.constraintPosition = constraintPosition;
@@ -51,7 +57,9 @@ namespace MonoGameVerlet.Verlet
             bloomFilter.Load(GraphicsDevice, Game.Content, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
             bloomFilter.BloomPreset = BloomFilter.BloomPresets.Focussed;
             bloomFilter.BloomStrengthMultiplier = .5f;
-            bloomFilter.BloomThreshold = .8f;
+            bloomFilter.BloomThreshold = .8f;  
+            
+            heatSource = new Rectangle((int)(constraintPosition.X - constraintRadius), 1025, (int)(constraintRadius * 2), 50); 
         }
 
         internal VerletComponent GetVerletComponent(Vector2 position)
@@ -81,6 +89,14 @@ namespace MonoGameVerlet.Verlet
             return closestToClick;
         }
 
+        internal List<VerletComponent> GetVerletComponents(Vector2 position, Vector2 size)
+        {
+            List<VerletComponent> components = new List<VerletComponent>();
+            QuadTree.Retrieve(components, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y));
+
+            return components;
+        }
+
         public override void Initialize()
         {
             base.Initialize();
@@ -88,9 +104,14 @@ namespace MonoGameVerlet.Verlet
 
         public void Update(float dt)
         {
+            
             applyGravity();
             applyConstraint();
             QuadTree.Update(verletComponents);
+            if (HeatEnabled)
+            {
+                applyHeat();
+            }
             solveCollisions();
             updatePositions(dt);
         }
@@ -119,19 +140,56 @@ namespace MonoGameVerlet.Verlet
 
         private void applyConstraint()
         {
-            Vector2 toComponent;
-            Vector2 n;
+            //Vector2 toComponent;
+            //Vector2 n;
 
+            //Circle
+            //foreach (var verletComponent in verletComponents)
+            //{
+            //    toComponent.X = verletComponent.PositionCurrent.X - constraintPosition.X;
+            //    toComponent.Y = verletComponent.PositionCurrent.Y - constraintPosition.Y;
+            //    float dist = toComponent.Length();
+
+            //    if(dist > constraintRadius - verletComponent.Radius)
+            //    {
+            //        n = Vector2.Divide(toComponent, dist);                    
+            //        verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
+            //    }
+            //}
+
+            //Rectangle
             foreach (var verletComponent in verletComponents)
             {
-                toComponent.X = verletComponent.PositionCurrent.X - constraintPosition.X;
-                toComponent.Y = verletComponent.PositionCurrent.Y - constraintPosition.Y;
-                float dist = toComponent.Length();
-
-                if(dist > constraintRadius - verletComponent.Radius)
+                if(verletComponent.PositionCurrent.X <= rectangleConstraint.X)
                 {
-                    n = Vector2.Divide(toComponent, dist);                    
-                    verletComponent.PositionCurrent = constraintPosition + Vector2.Multiply(n, constraintRadius - verletComponent.Radius);
+                    verletComponent.PositionCurrent.X = rectangleConstraint.X;
+                }
+
+                if (verletComponent.PositionCurrent.X >= rectangleConstraint.X + rectangleConstraint.Width)
+                {
+                    verletComponent.PositionCurrent.X = rectangleConstraint.X + rectangleConstraint.Width;
+                }
+
+                if (verletComponent.PositionCurrent.Y <= rectangleConstraint.Y)
+                {
+                    verletComponent.PositionCurrent.Y = rectangleConstraint.Y;
+                }
+
+                if (verletComponent.PositionCurrent.Y >= rectangleConstraint.Y + rectangleConstraint.Height)
+                {
+                    verletComponent.PositionCurrent.Y = rectangleConstraint.Y + rectangleConstraint.Height;
+                }
+            }
+        }
+
+        private void applyHeat()
+        {
+            foreach (var verletComponent in verletComponents)
+            {
+                //TODO: handle multiple heat sources
+                if (heatSource.Contains(verletComponent.PositionCurrent))
+                {
+                    verletComponent.ApplyTemperature(HeatAmount);
                 }
             }
         }
@@ -175,6 +233,20 @@ namespace MonoGameVerlet.Verlet
                             {
                                 verletComponent2.PositionCurrent -= 0.5f * delta * n;
                             }
+
+                            //Temp advection
+                            var tempDelta = verletComponent1.Temperature - verletComponent2.Temperature;
+
+                            if (tempDelta > 0)
+                            {
+                                verletComponent1.ApplyTemperature(-.01f);
+                                verletComponent2.ApplyTemperature(.01f);
+                            }
+                            else if (tempDelta < 0)
+                            {
+                                verletComponent1.ApplyTemperature(.01f);
+                                verletComponent2.ApplyTemperature(-.01f);
+                            }
                         }
                     }
                 }
@@ -204,6 +276,20 @@ namespace MonoGameVerlet.Verlet
                             float delta = minDist - dist;
                             verletComponent1.PositionCurrent += 0.5f * delta * n;
                             verletComponent2.PositionCurrent -= 0.5f * delta * n;
+
+                            //Temp advection
+                            var tempDelta = verletComponent1.Temperature - verletComponent2.Temperature;
+
+                            if (tempDelta > 0)
+                            {
+                                verletComponent1.ApplyTemperature(-.01f);
+                                verletComponent2.ApplyTemperature(.01f);
+                            }
+                            else if (tempDelta < 0)
+                            {
+                                verletComponent1.ApplyTemperature(.01f);
+                                verletComponent2.ApplyTemperature(-.01f);
+                            }
                         }
                     }
                 }
@@ -214,8 +300,10 @@ namespace MonoGameVerlet.Verlet
         {
             //Shader needs this spritebatch setup
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive);
+                        
+            //spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
+            spriteBatch.DrawRectangle(rectangleConstraint, Color.White);
 
-            spriteBatch.DrawCircle(constraintPosition, constraintRadius, 100, Color.White);
             if (DrawQuadTree && UseQuadTree)
             {
                 QuadTree.Draw(spriteBatch, GraphicsDevice);
@@ -240,24 +328,27 @@ namespace MonoGameVerlet.Verlet
             //Change spritebatch so we can do transparency
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-            foreach (var verletComponent in verletComponents)
-            {
-                spriteBatch.Draw(circleTexture,
-                    new Rectangle((int)verletComponent.PositionCurrent.X,
-                    (int)verletComponent.PositionCurrent.Y,
-                    (int)verletComponent.Radius * 2,
-                    (int)verletComponent.Radius * 2),
-                    verletComponent.Color * .5f);
-            }
+            //Heatsource
+            ShapeExtensions.DrawRectangle(spriteBatch, heatSource, Color.Red);
+
+            //foreach (var verletComponent in verletComponents)
+            //{
+            //    spriteBatch.Draw(circleTexture,
+            //        new Rectangle((int)verletComponent.PositionCurrent.X,
+            //        (int)verletComponent.PositionCurrent.Y,
+            //        (int)verletComponent.Radius * 2,
+            //        (int)verletComponent.Radius * 2),
+            //        verletComponent.Color);
+            //}
 
             spriteBatch.End();
 
             base.Draw(gameTime);
         }
 
-        public void AddVerletComponent(Vector2 position, float radius, bool isStatic = false)
+        public void AddVerletComponent(Vector2 position, float radius, bool isStatic = false, int temperature = 0)
         {
-            verletComponents.Add(new VerletComponent(position, radius, isStatic));
+            verletComponents.Add(new VerletComponent(position, radius, isStatic, temperature));
         }
 
         public void AddChain(ChainComponent chain)
@@ -266,6 +357,6 @@ namespace MonoGameVerlet.Verlet
             {
                 verletComponents.Add(link);
             }
-        }
+        }  
     }
 }

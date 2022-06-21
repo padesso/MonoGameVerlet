@@ -22,14 +22,15 @@ namespace MonoGameVerlet
         private double spawnDelay = 125; //ms
         private double spawnTime = 0;
 
-        private ChainComponent chain1;
-        private ChainComponent chain2;
+        //private ChainComponent chain1;
+        //private ChainComponent chain2;
 
         public ImGUIRenderer GuiRenderer;
         private bool reset = false;
 
         private VerletComponent selectedVerletComponent;
         private bool clickedComponentStatic = false;
+
 
         public Game1()
         {
@@ -116,23 +117,23 @@ namespace MonoGameVerlet
                 reset = false;
             }
 
-            spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
-            if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 500)
-            {
-                verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 10 + 5));
-                verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 10 + 5));
-                spawnTime = 0;
-            }
+            //spawnTime += gameTime.ElapsedGameTime.TotalMilliseconds;
+            //if (spawnTime > spawnDelay && verletSolver.NumberVerletComponents < 1200)
+            //{
+            //    verletSolver.AddVerletComponent(new Vector2(540, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(750, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(960, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(1170, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    verletSolver.AddVerletComponent(new Vector2(1380, 300), (float)(new Random().NextDouble() * 1 + 3));
+            //    spawnTime = 0;
+            //}
 
             float subDt = (float)(gameTime.ElapsedGameTime.TotalSeconds / verletSolver.SubSteps);
             for (int subStep = verletSolver.SubSteps; subStep > 0; subStep--)
             {
                 verletSolver.Update(subDt);
-                chain1.Update(subDt);
-                chain2.Update(subDt);
+                //chain1.Update(subDt);
+                //chain2.Update(subDt);
             }
 
             base.Update(gameTime);
@@ -142,11 +143,20 @@ namespace MonoGameVerlet
         {
             verletSolver.Reset();
 
-            chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
-            verletSolver.AddChain(chain1);
+            //new Vector2(960, 540f), 500
+            for (int i = 0; i < 300; i++)
+            {
+                for (int j = 0; j < 4; j++)
+                {
+                    verletSolver.AddVerletComponent(new Vector2(960 + i * 5, 500 + j * 5), 3);
+                }
+            }
 
-            chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
-            verletSolver.AddChain(chain2);
+            //chain1 = new ChainComponent(10, new Vector2(800, 500), new Vector2(1200, 500), 20, 40);
+            //verletSolver.AddChain(chain1);
+
+            //chain2 = new ChainComponent(10, new Vector2(600, 400), 20, 40);
+            //verletSolver.AddChain(chain2);
         }
 
         protected override void Draw(GameTime gameTime)
@@ -154,8 +164,6 @@ namespace MonoGameVerlet
             GraphicsDevice.Clear(Color.Black);
 
             verletSolver.Draw(gameTime);
-
-            //chain.Draw(spriteBatch, GraphicsDevice);
 
             //Debug info
             var deltaTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -168,7 +176,7 @@ namespace MonoGameVerlet
             ImGui.Begin("Settings");
 
             ImGui.SetWindowPos(new System.Numerics.Vector2(10, 10));
-            ImGui.SetWindowSize(new System.Numerics.Vector2(300, 425));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(300, 500));
 
             ImGui.Text("Debug");
             ImGui.Text(fps);
@@ -179,6 +187,8 @@ namespace MonoGameVerlet
             ImGui.SliderInt("Substeps", ref verletSolver.SubSteps, 1, 10);
             ImGui.SliderFloat("Gravity X", ref verletSolver.Gravity.X, -5000, 5000);
             ImGui.SliderFloat("Gravity Y", ref verletSolver.Gravity.Y, -5000, 5000);
+            ImGui.Checkbox("Heat Enabled?", ref verletSolver.HeatEnabled);
+            ImGui.SliderFloat("Heat Amount", ref verletSolver.HeatAmount, 0f, 1f);
 
             ImGui.NewLine();
 
